@@ -33,7 +33,10 @@
     },
     {
       "stage": "review",
-      "status": "pending"
+      "status": "passed",
+      "finishedAt": "2026-07-07T08:04:25.365Z",
+      "executor": "sonnet",
+      "notes": "review-report.md: clean verdict, 0 fixes, follow-up punch list incl. marked CVE"
     },
     {
       "stage": "document",
@@ -138,6 +141,14 @@
       "cwd": "runs/react-redux-realworld-example-app",
       "ok": true,
       "summary": "original 157/157, migrated 157/157, build clean 244KB, preview HTTP 200"
+    },
+    {
+      "ts": "2026-07-07T08:04:25.362Z",
+      "stage": "review",
+      "command": "TARGET=migrated npx vitest run",
+      "cwd": "runs/react-redux-realworld-example-app/characterization",
+      "ok": true,
+      "summary": "review pass: 157/157 both targets, build clean, no edits needed"
     }
   ]
 }
