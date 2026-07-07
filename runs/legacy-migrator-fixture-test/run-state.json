@@ -7,8 +7,8 @@
     {
       "stage": "select",
       "status": "passed",
-      "startedAt": "2026-07-07T16:38:11.458Z",
-      "finishedAt": "2026-07-07T16:38:12.437Z",
+      "startedAt": "2026-07-07T17:50:40.346Z",
+      "finishedAt": "2026-07-07T17:50:40.349Z",
       "notes": "/Users/joshualee/legacy-migrator/runs/legacy-migrator-fixture-test/original"
     },
     {
@@ -53,7 +53,12 @@
     },
     {
       "stage": "validate",
-      "status": "pending"
+      "status": "passed",
+      "startedAt": "2026-07-07T17:50:40.351Z",
+      "executor": "deterministic",
+      "finishedAt": "2026-07-07T17:50:42.072Z",
+      "notes": "all checks passed — see validate-report.md",
+      "costUsd": 0
     }
   ],
   "decisions": [
