@@ -1,7 +1,10 @@
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { Router, type RunContext } from '@legacy-migrator/core';
-import { PIPELINE_AGENTS, analyzer, docWriter, migrator, reviewer, testGenerator } from '../src/index.js';
+import { PIPELINE_AGENTS, analyzer, docWriter, migrator, reviewer, testGenerator, validator } from '../src/index.js';
 
 const ctx: RunContext = {
   name: 'demo',
@@ -12,20 +15,23 @@ const ctx: RunContext = {
   migratedDir: '/runs/demo/migrated',
 };
 
+const modelDrivenAgents = [analyzer, testGenerator, migrator, reviewer, docWriter];
+
 describe('agent definitions', () => {
-  it('covers the five pipeline stages in governance order', () => {
+  it('covers the six pipeline stages in governance order', () => {
     expect(PIPELINE_AGENTS.map((a) => a.stage)).toEqual([
       'analyze',
       'testgen',
       'migrate',
       'review',
       'document',
+      'validate',
     ]);
   });
 
-  it('every agent task type has an explicit routing rule (no silent default)', () => {
+  it('every model-driven agent task type has an explicit routing rule (no silent default)', () => {
     const router = new Router();
-    for (const agent of PIPELINE_AGENTS) {
+    for (const agent of modelDrivenAgents) {
       expect(router.route(agent.taskType).matchedRule).toBe(`task_types.${agent.taskType}`);
     }
   });
@@ -39,12 +45,19 @@ describe('agent definitions', () => {
     expect(router.route(docWriter.taskType).executor).toBe('haiku');
   });
 
-  it('embeds the governance rules and run paths in every prompt', () => {
-    for (const agent of PIPELINE_AGENTS) {
-      const prompt = agent.buildPrompt(ctx);
+  it('embeds the governance rules and run paths in every model-driven prompt', () => {
+    for (const agent of modelDrivenAgents) {
+      const prompt = agent.buildPrompt!(ctx);
       expect(prompt).toContain('Governance rules');
       expect(prompt).toContain('/runs/demo');
     }
+  });
+
+  it('validate is fully deterministic: no prompt, no router-mapped executor, no generic gate hooks', () => {
+    expect(validator.buildPrompt).toBeUndefined();
+    expect(validator.gateCommand).toBeUndefined();
+    expect(validator.validationCommand).toBeUndefined();
+    expect(validator.runDeterministic).toBeTypeOf('function');
   });
 
   it('gates testgen on the characterization suite against original', () => {
@@ -86,9 +99,104 @@ describe('agent definitions', () => {
   });
 
   it('keeps original/ immutable and migrated/ as the work area in the migrator prompt', () => {
-    const prompt = migrator.buildPrompt(ctx);
+    const prompt = migrator.buildPrompt!(ctx);
     expect(prompt).toContain('original');
     expect(prompt).toContain('/runs/demo/migrated');
     expect(prompt).toMatch(/Never delete or edit anything under original/);
+  });
+});
+
+describe('validate stage — runDeterministic checks', () => {
+  function setupRun(over: { migratedPkg?: object; migratedFiles?: Record<string, string> } = {}) {
+    const runDir = mkdtempSync(join(tmpdir(), 'validate-'));
+    const characterizationDir = join(runDir, 'characterization');
+    const migratedDir = join(runDir, 'migrated');
+    mkdirSync(characterizationDir, { recursive: true });
+    mkdirSync(migratedDir, { recursive: true });
+
+    writeFileSync(
+      join(characterizationDir, 'package.json'),
+      JSON.stringify({ name: 'characterization', scripts: { 'test:migrated': 'node -e "process.exit(0)"' } }),
+    );
+    writeFileSync(
+      join(migratedDir, 'package.json'),
+      JSON.stringify(over.migratedPkg ?? { name: 'migrated', dependencies: {} }),
+    );
+    for (const [name, content] of Object.entries(over.migratedFiles ?? { 'src/App.js': 'const App = () => null;\nexport default App;\n' })) {
+      const full = join(migratedDir, name);
+      mkdirSync(join(full, '..'), { recursive: true });
+      writeFileSync(full, content);
+    }
+
+    const runCtx: RunContext = {
+      name: 'validate-fixture',
+      repoUrl: 'https://github.com/x/demo',
+      lane: 'class-react-to-hooks',
+      runDir,
+      originalDir: join(runDir, 'original'),
+      migratedDir,
+      validationCommand: { command: 'npm run test:migrated', cwd: characterizationDir },
+    };
+    return { runDir, runCtx };
+  }
+
+  it('passes cleanly when the recorded validationCommand succeeds and no legacy patterns remain', () => {
+    const { runCtx } = setupRun();
+    const result = validator.runDeterministic!(runCtx);
+    expect(result.ok).toBe(true);
+    expect(result.costUsd).toBe(0);
+  });
+
+  it('skips the build check when migrated/package.json defines no build script, without failing the stage', () => {
+    const { runDir, runCtx } = setupRun();
+    const result = validator.runDeterministic!(runCtx);
+    expect(result.ok).toBe(true);
+    const report = readFileSync(join(runDir, 'validate-report.md'), 'utf8');
+    expect(report).toContain('SKIP');
+    expect(report).toContain('no `build` script');
+  });
+
+  it('regression: reports FAIL (not a false pass) when migrated/src still has a legacy connect() call', () => {
+    const { runDir, runCtx } = setupRun({
+      migratedFiles: {
+        'src/App.js': 'const App = () => null;\nexport default App;\n',
+        'src/Old.js':
+          "import { connect } from 'react-redux';\nclass Old extends React.Component {}\nexport default connect(() => ({}))(Old);\n",
+      },
+    });
+    const result = validator.runDeterministic!(runCtx);
+    expect(result.ok).toBe(false);
+    const report = readFileSync(join(runDir, 'validate-report.md'), 'utf8');
+    expect(report).toContain('FAIL');
+    expect(report).toContain('connect(');
+    expect(report).toContain('src/Old.js');
+    expect(report).toContain('## Result: FAIL');
+  });
+
+  it('fails when no validationCommand was ever recorded, rather than silently skipping the final check', () => {
+    const { runCtx } = setupRun();
+    const withoutCommand: RunContext = { ...runCtx, validationCommand: undefined };
+    const result = validator.runDeterministic!(withoutCommand);
+    expect(result.ok).toBe(false);
+    expect(result.notes).toMatch(/checks failed/);
+  });
+
+  it('fails when the recorded validationCommand itself fails', () => {
+    const { runCtx } = setupRun();
+    const broken: RunContext = {
+      ...runCtx,
+      validationCommand: { command: 'node -e "process.exit(1)"', cwd: runCtx.runDir },
+    };
+    const result = validator.runDeterministic!(broken);
+    expect(result.ok).toBe(false);
+  });
+
+  it('runs and requires a passing build when migrated/package.json defines one', () => {
+    const { runDir, runCtx } = setupRun({ migratedPkg: { name: 'migrated', scripts: { build: 'node -e "process.exit(1)"' } } });
+    const result = validator.runDeterministic!(runCtx);
+    expect(result.ok).toBe(false);
+    const report = readFileSync(join(runDir, 'validate-report.md'), 'utf8');
+    expect(report).toContain('## 2. Production build');
+    expect(report).toMatch(/FAIL.*exit 1/);
   });
 });

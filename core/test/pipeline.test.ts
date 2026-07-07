@@ -242,4 +242,58 @@ describe('Pipeline', () => {
       ).toThrow(/no validationCommand recorded/);
     });
   });
+
+  describe('runDeterministic — mechanical stages that skip the router/adapter entirely', () => {
+    it('never touches the router or any adapter when runDeterministic is present', () => {
+      const record = pipeline.store.create('demo', 'url', 'lane');
+      const result = pipeline.runStage(
+        record,
+        stage({
+          stage: 'validate',
+          taskType: 'validate',
+          buildPrompt: undefined,
+          runDeterministic: () => ({ ok: true, notes: 'all good', costUsd: 0 }),
+        }),
+      );
+      expect(result.status).toBe('ok');
+      expect(result.executor).toBe('deterministic');
+      expect(fable.calls).toHaveLength(0);
+      expect(sonnet.calls).toHaveLength(0);
+    });
+
+    it('marks the stage passed and persists notes/costUsd when the check reports ok', () => {
+      const record = pipeline.store.create('demo', 'url', 'lane');
+      pipeline.runStage(
+        record,
+        stage({
+          stage: 'validate',
+          taskType: 'validate',
+          buildPrompt: undefined,
+          runDeterministic: () => ({ ok: true, notes: 'all checks passed', costUsd: 0 }),
+        }),
+      );
+      const rec = pipeline.store.load('demo');
+      const validateStage = rec.stages.find((s) => s.stage === 'validate')!;
+      expect(validateStage.status).toBe('passed');
+      expect(validateStage.executor).toBe('deterministic');
+      expect(validateStage.notes).toBe('all checks passed');
+    });
+
+    it('regression: marks the stage failed (not a false pass) when the check reports ok: false', () => {
+      const record = pipeline.store.create('demo', 'url', 'lane');
+      const result = pipeline.runStage(
+        record,
+        stage({
+          stage: 'validate',
+          taskType: 'validate',
+          buildPrompt: undefined,
+          runDeterministic: () => ({ ok: false, notes: 'legacy pattern still present', costUsd: 0 }),
+        }),
+      );
+      expect(result.status).toBe('error');
+      const rec = pipeline.store.load('demo');
+      expect(rec.stages.find((s) => s.stage === 'validate')!.status).toBe('failed');
+      expect(rec.stages.find((s) => s.stage === 'validate')!.notes).toBe('legacy pattern still present');
+    });
+  });
 });
