@@ -1,171 +1,158 @@
 import ListErrors from './ListErrors';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import agent from '../agent';
-import { connect } from 'react-redux';
 import {
   SETTINGS_SAVED,
-  SETTINGS_PAGE_UNLOADED,
   LOGOUT
 } from '../constants/actionTypes';
 
-class SettingsForm extends React.Component {
-  constructor() {
-    super();
+const emptyForm = {
+  image: '',
+  username: '',
+  bio: '',
+  email: '',
+  password: ''
+};
 
-    this.state = {
-      image: '',
-      username: '',
-      bio: '',
-      email: '',
-      password: ''
-    };
+const fromUser = currentUser => ({
+  image: currentUser.image || '',
+  username: currentUser.username,
+  bio: currentUser.bio,
+  email: currentUser.email
+});
 
-    this.updateState = field => ev => {
-      const state = this.state;
-      const newState = Object.assign({}, state, { [field]: ev.target.value });
-      this.setState(newState);
-    };
+const SettingsForm = ({ currentUser, onSubmitForm }) => {
+  // initialize from currentUser like the original's componentWillMount did
+  const [form, setForm] = useState(() =>
+    currentUser ? { ...emptyForm, ...fromUser(currentUser) } : emptyForm
+  );
 
-    this.submitForm = ev => {
-      ev.preventDefault();
-
-      const user = Object.assign({}, this.state);
-      if (!user.password) {
-        delete user.password;
-      }
-
-      this.props.onSubmitForm(user);
-    };
-  }
-
-  componentWillMount() {
-    if (this.props.currentUser) {
-      Object.assign(this.state, {
-        image: this.props.currentUser.image || '',
-        username: this.props.currentUser.username,
-        bio: this.props.currentUser.bio,
-        email: this.props.currentUser.email
-      });
+  // re-sync when the saved user comes back, like componentWillReceiveProps did
+  useEffect(() => {
+    if (currentUser) {
+      setForm(prev => ({ ...prev, ...fromUser(currentUser) }));
     }
-  }
+  }, [currentUser]);
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.currentUser) {
-      this.setState(Object.assign({}, this.state, {
-        image: nextProps.currentUser.image || '',
-        username: nextProps.currentUser.username,
-        bio: nextProps.currentUser.bio,
-        email: nextProps.currentUser.email
-      }));
+  const updateState = field => ev => {
+    // capture eagerly: the updater runs after React restores the controlled
+    // input, so reading ev.target.value inside it would see the old value
+    const value = ev.target.value;
+    setForm(prev => ({ ...prev, [field]: value }));
+  };
+
+  const submitForm = ev => {
+    ev.preventDefault();
+
+    const user = Object.assign({}, form);
+    if (!user.password) {
+      delete user.password;
     }
-  }
 
-  render() {
-    return (
-      <form onSubmit={this.submitForm}>
-        <fieldset>
+    onSubmitForm(user);
+  };
 
-          <fieldset className="form-group">
-            <input
-              className="form-control"
-              type="text"
-              placeholder="URL of profile picture"
-              value={this.state.image}
-              onChange={this.updateState('image')} />
-          </fieldset>
+  return (
+    <form onSubmit={submitForm}>
+      <fieldset>
 
-          <fieldset className="form-group">
-            <input
-              className="form-control form-control-lg"
-              type="text"
-              placeholder="Username"
-              value={this.state.username}
-              onChange={this.updateState('username')} />
-          </fieldset>
-
-          <fieldset className="form-group">
-            <textarea
-              className="form-control form-control-lg"
-              rows="8"
-              placeholder="Short bio about you"
-              value={this.state.bio}
-              onChange={this.updateState('bio')}>
-            </textarea>
-          </fieldset>
-
-          <fieldset className="form-group">
-            <input
-              className="form-control form-control-lg"
-              type="email"
-              placeholder="Email"
-              value={this.state.email}
-              onChange={this.updateState('email')} />
-          </fieldset>
-
-          <fieldset className="form-group">
-            <input
-              className="form-control form-control-lg"
-              type="password"
-              placeholder="New Password"
-              value={this.state.password}
-              onChange={this.updateState('password')} />
-          </fieldset>
-
-          <button
-            className="btn btn-lg btn-primary pull-xs-right"
-            type="submit"
-            disabled={this.state.inProgress}>
-            Update Settings
-          </button>
-
+        <fieldset className="form-group">
+          <input
+            className="form-control"
+            type="text"
+            placeholder="URL of profile picture"
+            value={form.image}
+            onChange={updateState('image')} />
         </fieldset>
-      </form>
-    );
-  }
-}
 
-const mapStateToProps = state => ({
-  ...state.settings,
-  currentUser: state.common.currentUser
-});
+        <fieldset className="form-group">
+          <input
+            className="form-control form-control-lg"
+            type="text"
+            placeholder="Username"
+            value={form.username}
+            onChange={updateState('username')} />
+        </fieldset>
 
-const mapDispatchToProps = dispatch => ({
-  onClickLogout: () => dispatch({ type: LOGOUT }),
-  onSubmitForm: user =>
-    dispatch({ type: SETTINGS_SAVED, payload: agent.Auth.save(user) }),
-  onUnload: () => dispatch({ type: SETTINGS_PAGE_UNLOADED })
-});
+        <fieldset className="form-group">
+          <textarea
+            className="form-control form-control-lg"
+            rows="8"
+            placeholder="Short bio about you"
+            value={form.bio}
+            onChange={updateState('bio')}>
+          </textarea>
+        </fieldset>
 
-class Settings extends React.Component {
-  render() {
-    return (
-      <div className="settings-page">
-        <div className="container page">
-          <div className="row">
-            <div className="col-md-6 offset-md-3 col-xs-12">
+        <fieldset className="form-group">
+          <input
+            className="form-control form-control-lg"
+            type="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={updateState('email')} />
+        </fieldset>
 
-              <h1 className="text-xs-center">Your Settings</h1>
+        <fieldset className="form-group">
+          <input
+            className="form-control form-control-lg"
+            type="password"
+            placeholder="New Password"
+            value={form.password}
+            onChange={updateState('password')} />
+        </fieldset>
 
-              <ListErrors errors={this.props.errors}></ListErrors>
+        <button
+          className="btn btn-lg btn-primary pull-xs-right"
+          type="submit"
+          disabled={form.inProgress}>
+          Update Settings
+        </button>
 
-              <SettingsForm
-                currentUser={this.props.currentUser}
-                onSubmitForm={this.props.onSubmitForm} />
+      </fieldset>
+    </form>
+  );
+};
 
-              <hr />
+const Settings = () => {
+  const errors = useSelector(state => state.settings.errors);
+  const currentUser = useSelector(state => state.common.currentUser);
+  const dispatch = useDispatch();
 
-              <button
-                className="btn btn-outline-danger"
-                onClick={this.props.onClickLogout}>
-                Or click here to logout.
-              </button>
+  const onClickLogout = () => dispatch({ type: LOGOUT });
+  const onSubmitForm = user =>
+    dispatch({ type: SETTINGS_SAVED, payload: agent.Auth.save(user) });
+  // NOTE: faithful to the original, no SETTINGS_PAGE_UNLOADED is ever
+  // dispatched — the class version mapped onUnload but never called it.
 
-            </div>
+  return (
+    <div className="settings-page">
+      <div className="container page">
+        <div className="row">
+          <div className="col-md-6 offset-md-3 col-xs-12">
+
+            <h1 className="text-xs-center">Your Settings</h1>
+
+            <ListErrors errors={errors}></ListErrors>
+
+            <SettingsForm
+              currentUser={currentUser}
+              onSubmitForm={onSubmitForm} />
+
+            <hr />
+
+            <button
+              className="btn btn-outline-danger"
+              onClick={onClickLogout}>
+              Or click here to logout.
+            </button>
+
           </div>
         </div>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
-export default connect(mapStateToProps, mapDispatchToProps)(Settings);
+export default Settings;

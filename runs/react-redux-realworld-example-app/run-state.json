@@ -86,6 +86,21 @@
       "ts": "2026-07-07T07:48:03.520Z",
       "stage": "migrate",
       "rationale": "M0: dropped write-only state.router slice with react-router-redux; redirect now history.push in App"
+    },
+    {
+      "ts": "2026-07-07T07:56:46.721Z",
+      "stage": "migrate",
+      "rationale": "M4: Editor stale-slug willReceiveProps bug NOT replicated (unreachable path) — flagged in migration-log.md"
+    },
+    {
+      "ts": "2026-07-07T07:56:46.722Z",
+      "stage": "migrate",
+      "rationale": "M4: Settings never dispatched SETTINGS_PAGE_UNLOADED upstream — preserved exactly"
+    },
+    {
+      "ts": "2026-07-07T07:56:46.724Z",
+      "stage": "migrate",
+      "rationale": "M4: controlled-input eager ev.target.value capture — lazy read inside setState updater loses keystrokes (caught by settings flow test)"
     }
   ],
   "testGates": [
@@ -104,6 +119,14 @@
       "cwd": "runs/react-redux-realworld-example-app/characterization",
       "ok": true,
       "summary": "M0 toolchain: Tests 157 passed (157) + vite build clean"
+    },
+    {
+      "ts": "2026-07-07T07:56:46.718Z",
+      "stage": "migrate",
+      "command": "TARGET=migrated npx vitest run",
+      "cwd": "runs/react-redux-realworld-example-app/characterization",
+      "ok": true,
+      "summary": "M1-M4: Tests 157 passed (157)"
     }
   ]
 }
