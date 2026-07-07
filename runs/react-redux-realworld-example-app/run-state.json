@@ -1,0 +1,46 @@
+{
+  "name": "react-redux-realworld-example-app",
+  "repoUrl": "https://github.com/gothinkster/react-redux-realworld-example-app",
+  "lane": "class-react-to-hooks",
+  "createdAt": "2026-07-07T05:00:48.724Z",
+  "stages": [
+    {
+      "stage": "select",
+      "status": "passed",
+      "finishedAt": "2026-07-07T05:00:48.728Z",
+      "notes": "cloned at ee72eba, MIT, archived upstream; nested .git stripped, SHA recorded in target-rationale.md"
+    },
+    {
+      "stage": "analyze",
+      "status": "pending"
+    },
+    {
+      "stage": "testgen",
+      "status": "pending"
+    },
+    {
+      "stage": "migrate",
+      "status": "pending"
+    },
+    {
+      "stage": "review",
+      "status": "pending"
+    },
+    {
+      "stage": "document",
+      "status": "pending"
+    },
+    {
+      "stage": "validate",
+      "status": "pending"
+    }
+  ],
+  "decisions": [
+    {
+      "ts": "2026-07-07T05:00:48.729Z",
+      "stage": "select",
+      "rationale": "Chose archived MIT realworld app over larger GPL/unlicensed candidates; 2340 LOC slightly under rough floor — flagged in target-rationale.md"
+    }
+  ],
+  "testGates": []
+}
