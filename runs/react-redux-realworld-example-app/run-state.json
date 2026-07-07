@@ -7,8 +7,9 @@
     {
       "stage": "select",
       "status": "passed",
-      "finishedAt": "2026-07-07T05:00:48.728Z",
-      "notes": "cloned at ee72eba, MIT, archived upstream; nested .git stripped, SHA recorded in target-rationale.md"
+      "finishedAt": "2026-07-07T17:55:50.345Z",
+      "notes": "/Users/joshualee/legacy-migrator/runs/react-redux-realworld-example-app/original",
+      "startedAt": "2026-07-07T17:55:50.341Z"
     },
     {
       "stage": "analyze",
@@ -48,9 +49,11 @@
     {
       "stage": "validate",
       "status": "passed",
-      "finishedAt": "2026-07-07T08:08:36.650Z",
-      "executor": "fable",
-      "notes": "all characterization tests pass on migrated code; no regressions; builds and serves cleanly"
+      "finishedAt": "2026-07-07T17:55:54.795Z",
+      "executor": "deterministic",
+      "notes": "all checks passed — see validate-report.md",
+      "startedAt": "2026-07-07T17:55:50.348Z",
+      "costUsd": 0
     }
   ],
   "decisions": [
@@ -169,5 +172,10 @@
       "ok": true,
       "summary": "FINAL: original 157/157, migrated 157/157, build clean, monorepo 29/29"
     }
-  ]
+  ],
+  "validationCommand": {
+    "command": "npm run test:migrated",
+    "cwd": "/Users/joshualee/legacy-migrator/runs/react-redux-realworld-example-app/characterization"
+  },
+  "costTotalUsd": 0
 }
