@@ -76,6 +76,16 @@
       "ts": "2026-07-07T05:22:11.113Z",
       "stage": "testgen",
       "rationale": "Characterized 7 as-is behaviors incl. DELETE_COMMENT throw on undefined comments, logout jwt=''  not removeItem, settings ASYNC_START no subtype gate, unreachable PROFILE_FAVORITES_* action types, omitSlug slug:undefined key, marked sanitize escaping, unguarded favorite dispatch"
+    },
+    {
+      "ts": "2026-07-07T07:48:03.518Z",
+      "stage": "migrate",
+      "rationale": "M0: .js→.jsx renames so stock Vite handles JSX; extensionless imports unchanged"
+    },
+    {
+      "ts": "2026-07-07T07:48:03.520Z",
+      "stage": "migrate",
+      "rationale": "M0: dropped write-only state.router slice with react-router-redux; redirect now history.push in App"
     }
   ],
   "testGates": [
@@ -86,6 +96,14 @@
       "cwd": "runs/react-redux-realworld-example-app/characterization",
       "ok": true,
       "summary": "Tests  157 passed (157) — golden master green on ORIGINAL"
+    },
+    {
+      "ts": "2026-07-07T07:48:03.514Z",
+      "stage": "migrate",
+      "command": "TARGET=migrated npx vitest run",
+      "cwd": "runs/react-redux-realworld-example-app/characterization",
+      "ok": true,
+      "summary": "M0 toolchain: Tests 157 passed (157) + vite build clean"
     }
   ]
 }

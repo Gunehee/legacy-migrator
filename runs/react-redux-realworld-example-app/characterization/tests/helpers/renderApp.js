@@ -19,12 +19,13 @@ export async function renderApp({ route = '/', jwt = null } = {}) {
   const { Provider } = await import('react-redux');
   const { Route, Switch } = await import('react-router-dom');
 
-  // original wires ConnectedRouter (react-router-redux); migrated uses plain Router.
+  // original wires ConnectedRouter (react-router-redux) and exposes state.router
+  // via routerReducer; migrated drops both. Detect from the store itself.
   let RouterEl;
-  try {
+  if ('router' in store.getState()) {
     const rrr = await import('react-router-redux');
     RouterEl = ({ children }) => React.createElement(rrr.ConnectedRouter, { history }, children);
-  } catch {
+  } else {
     const { Router } = await import('react-router-dom');
     RouterEl = ({ children }) => React.createElement(Router, { history }, children);
   }
