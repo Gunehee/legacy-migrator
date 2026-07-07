@@ -57,4 +57,28 @@ describe('RunStore', () => {
     expect(() => store.load('missing')).toThrow(/no run record/);
     expect(() => store.setStage('a', 'bogus' as never, 'passed')).toThrow(/unknown stage/);
   });
+
+  it('accumulates costUsd into a running costTotalUsd across stages, pass or fail', () => {
+    store.create('demo', 'url', 'lane');
+    store.setStage('demo', 'analyze', 'passed', { costUsd: 0.5 });
+    expect(store.load('demo').costTotalUsd).toBe(0.5);
+
+    // a failed stage still spent tokens — it must still count
+    store.setStage('demo', 'migrate', 'failed', { costUsd: 0.25 });
+    expect(store.load('demo').costTotalUsd).toBe(0.75);
+
+    // stages with no cost info (e.g. costUsd absent) leave the total unchanged
+    store.setStage('demo', 'testgen', 'passed', {});
+    expect(store.load('demo').costTotalUsd).toBe(0.75);
+
+    const analyze = store.load('demo').stages.find((s) => s.stage === 'analyze')!;
+    const migrate = store.load('demo').stages.find((s) => s.stage === 'migrate')!;
+    expect(analyze.costUsd).toBe(0.5);
+    expect(migrate.costUsd).toBe(0.25);
+  });
+
+  it('starts a fresh run with no costTotalUsd until a stage reports one', () => {
+    store.create('demo', 'url', 'lane');
+    expect(store.load('demo').costTotalUsd).toBeUndefined();
+  });
 });

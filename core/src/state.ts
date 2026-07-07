@@ -28,6 +28,8 @@ export interface StageRecord {
   finishedAt?: string;
   executor?: string;
   notes?: string;
+  /** Set whenever the executor's JSON result envelope reports a cost — pass or fail. */
+  costUsd?: number;
 }
 
 export interface Decision {
@@ -53,6 +55,8 @@ export interface RunRecord {
   stages: StageRecord[];
   decisions: Decision[];
   testGates: TestGateRecord[];
+  /** Running total of every stage's costUsd recorded so far, pass or fail. */
+  costTotalUsd?: number;
 }
 
 const now = () => new Date().toISOString();
@@ -106,6 +110,11 @@ export class RunStore {
     if (status === 'passed' || status === 'failed') entry.finishedAt = now();
     entry.status = status;
     Object.assign(entry, patch);
+    // Cost accrues whether the stage passed or failed — a failed run still
+    // spent tokens getting there, and the run record should reflect that.
+    if (typeof patch.costUsd === 'number') {
+      record.costTotalUsd = (record.costTotalUsd ?? 0) + patch.costUsd;
+    }
     this.save(record);
     return record;
   }

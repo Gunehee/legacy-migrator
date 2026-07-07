@@ -1,0 +1,79 @@
+{
+  "name": "legacy-migrator-fixture-test",
+  "repoUrl": "https://github.com/Gunehee/legacy-migrator-fixture-test",
+  "lane": "class-react-to-hooks",
+  "createdAt": "2026-07-07T10:01:11.902Z",
+  "stages": [
+    {
+      "stage": "select",
+      "status": "passed",
+      "startedAt": "2026-07-07T10:01:11.906Z",
+      "finishedAt": "2026-07-07T10:01:12.617Z",
+      "notes": "/Users/joshualee/legacy-migrator/runs/legacy-migrator-fixture-test/original"
+    },
+    {
+      "stage": "analyze",
+      "status": "passed",
+      "startedAt": "2026-07-07T10:01:12.675Z",
+      "executor": "fable",
+      "finishedAt": "2026-07-07T10:03:25.706Z"
+    },
+    {
+      "stage": "testgen",
+      "status": "passed",
+      "startedAt": "2026-07-07T10:03:25.756Z",
+      "executor": "sonnet",
+      "finishedAt": "2026-07-07T10:07:33.273Z",
+      "notes": "characterization/: 4 files / 30 tests (store 15, Counter 5, TodoList 8, wiring 2) — all green against original/"
+    },
+    {
+      "stage": "migrate",
+      "status": "failed",
+      "startedAt": "2026-07-07T10:07:33.317Z",
+      "executor": "fable",
+      "finishedAt": "2026-07-07T10:13:53.308Z",
+      "notes": "exit 1: ⚠ claude.ai connectors are disabled because ANTHROPIC_API_KEY or another auth source is set and takes precedence over your claude.ai login · Unset it to load your organization's connectors\n"
+    },
+    {
+      "stage": "review",
+      "status": "pending"
+    },
+    {
+      "stage": "document",
+      "status": "pending"
+    },
+    {
+      "stage": "validate",
+      "status": "pending"
+    }
+  ],
+  "decisions": [
+    {
+      "ts": "2026-07-07T10:06:30.000Z",
+      "stage": "testgen",
+      "rationale": "R1 resolved without a source change: tests get store isolation via vi.resetModules() + dynamic re-import per test, not an added `export const reducer`. No original/ or migrated/ source touched to make tests possible."
+    },
+    {
+      "ts": "2026-07-07T10:06:30.000Z",
+      "stage": "testgen",
+      "rationale": "characterization/ toolchain mirrors the established dual-target harness (vitest+jsdom+@testing-library/react, TARGET=original|migrated via '@app' alias) from the prior react-redux-realworld-example-app run, scaled down (no router) for this fixture's smaller surface."
+    }
+  ],
+  "testGates": [
+    {
+      "ts": "2026-07-07T10:06:30.000Z",
+      "stage": "testgen",
+      "target": "original",
+      "status": "passed",
+      "notes": "30/30 tests green via `TARGET=original vitest run`"
+    },
+    {
+      "ts": "2026-07-07T10:07:33.272Z",
+      "stage": "testgen",
+      "command": "npm test",
+      "cwd": "/Users/joshualee/legacy-migrator/runs/legacy-migrator-fixture-test/characterization",
+      "ok": true,
+      "summary": "Tests \u001b[22m \u001b[1m\u001b[32m30 passed\u001b[39m\u001b[22m\u001b[90m (30)\u001b[39m"
+    }
+  ]
+}

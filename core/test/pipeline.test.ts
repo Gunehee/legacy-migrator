@@ -14,6 +14,7 @@ class FakeAdapter implements ExecutorAdapter {
     readonly name: string,
     private readonly available = true,
     private readonly fail = false,
+    private readonly costUsd?: number,
   ) {}
   isAvailable() {
     return this.available;
@@ -26,6 +27,7 @@ class FakeAdapter implements ExecutorAdapter {
       status: this.fail ? 'error' : 'ok',
       output: 'done',
       error: this.fail ? 'boom' : undefined,
+      costUsd: this.costUsd,
       latencyMs: 1,
     };
   }
@@ -114,5 +116,36 @@ describe('Pipeline', () => {
     const result = p.runStage(record, stage());
     expect(result.status).toBe('error');
     expect(p.store.load('demo').stages.find((s) => s.stage === 'analyze')!.status).toBe('failed');
+  });
+
+  it('persists costUsd onto the stage record and into costTotalUsd on success', () => {
+    const costly = new FakeAdapter('fable', true, false, 0.42);
+    const p = new Pipeline({ runsRoot: mkdtempSync(join(tmpdir(), 'pipe-')), adapters: { fable: costly } });
+    const record = p.store.create('demo', 'url', 'lane');
+    p.runStage(record, stage());
+    const rec = p.store.load('demo');
+    expect(rec.stages.find((s) => s.stage === 'analyze')!.costUsd).toBe(0.42);
+    expect(rec.costTotalUsd).toBe(0.42);
+  });
+
+  it('persists costUsd even when the executor itself errors — a failed stage still spent tokens', () => {
+    const costlyFailure = new FakeAdapter('fable', true, true, 0.17);
+    const p = new Pipeline({ runsRoot: mkdtempSync(join(tmpdir(), 'pipe-')), adapters: { fable: costlyFailure } });
+    const record = p.store.create('demo', 'url', 'lane');
+    p.runStage(record, stage());
+    const rec = p.store.load('demo');
+    expect(rec.stages.find((s) => s.stage === 'analyze')!.costUsd).toBe(0.17);
+    expect(rec.costTotalUsd).toBe(0.17);
+  });
+
+  it('persists the pre-gate costUsd when the stage fails on the test gate', () => {
+    const costly = new FakeAdapter('fable', true, false, 0.05);
+    const p = new Pipeline({ runsRoot: mkdtempSync(join(tmpdir(), 'pipe-')), adapters: { fable: costly } });
+    const record = p.store.create('demo', 'url', 'lane');
+    p.runStage(record, stage({ gateCommand: () => ({ command: 'node -e "process.exit(1)"', cwd: process.cwd() }) }));
+    const rec = p.store.load('demo');
+    expect(rec.stages.find((s) => s.stage === 'analyze')!.status).toBe('failed');
+    expect(rec.stages.find((s) => s.stage === 'analyze')!.costUsd).toBe(0.05);
+    expect(rec.costTotalUsd).toBe(0.05);
   });
 });

@@ -97,7 +97,7 @@ export class Pipeline {
     const task = newTask(stage.buildPrompt(ctx), stage.taskType, ctx.runDir);
     const result = adapter.execute(task, decision.effort);
     if (result.status !== 'ok') {
-      this.store.setStage(record.name, stage.stage, 'failed', { notes: result.error });
+      this.store.setStage(record.name, stage.stage, 'failed', { notes: result.error, costUsd: result.costUsd });
       return result;
     }
 
@@ -114,12 +114,13 @@ export class Pipeline {
       if (!gateResult.ok) {
         this.store.setStage(record.name, stage.stage, 'failed', {
           notes: `gate failed: ${gateResult.summary}`,
+          costUsd: result.costUsd,
         });
         return { ...result, status: 'error', error: `test gate failed: ${gateResult.summary}` };
       }
     }
 
-    this.store.setStage(record.name, stage.stage, 'passed');
+    this.store.setStage(record.name, stage.stage, 'passed', { costUsd: result.costUsd });
     return result;
   }
 
