@@ -1,48 +1,40 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { addTodo } from './store';
 
-class TodoList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { text: '' };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+const TodoList = () => {
+  const [text, setText] = useState('');
+  const todos = useSelector(state => state.todos);
+  const dispatch = useDispatch();
 
-  handleChange(ev) {
-    this.setState({ text: ev.target.value });
-  }
+  const handleChange = ev => {
+    setText(ev.target.value);
+  };
 
-  handleSubmit(ev) {
+  const handleSubmit = ev => {
     ev.preventDefault();
-    if (!this.state.text) {
+    // Deliberately NOT trimmed: only '' is blocked; whitespace-only and "0" submit
+    // (pinned by characterization tests — preserve exactly).
+    if (!text) {
       return;
     }
-    this.props.onAddTodo(this.state.text);
-    this.setState({ text: '' });
-  }
+    dispatch(addTodo(text));
+    setText('');
+  };
 
-  render() {
-    return (
-      <div className="todo-list">
-        <form onSubmit={this.handleSubmit}>
-          <input value={this.state.text} onChange={this.handleChange} />
-          <button type="submit">Add</button>
-        </form>
-        <ul>
-          {this.props.todos.map((todo, i) => (
-            <li key={i}>{todo}</li>
-          ))}
-        </ul>
-      </div>
-    );
-  }
-}
+  return (
+    <div className="todo-list">
+      <form onSubmit={handleSubmit}>
+        <input value={text} onChange={handleChange} />
+        <button type="submit">Add</button>
+      </form>
+      <ul>
+        {todos.map((todo, i) => (
+          <li key={i}>{todo}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
 
-const mapStateToProps = state => ({ todos: state.todos });
-const mapDispatchToProps = dispatch => ({
-  onAddTodo: text => dispatch(addTodo(text))
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(TodoList);
+export default TodoList;

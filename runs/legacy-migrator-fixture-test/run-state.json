@@ -7,8 +7,8 @@
     {
       "stage": "select",
       "status": "passed",
-      "startedAt": "2026-07-07T10:01:11.906Z",
-      "finishedAt": "2026-07-07T10:01:12.617Z",
+      "startedAt": "2026-07-07T15:18:38.627Z",
+      "finishedAt": "2026-07-07T15:18:38.631Z",
       "notes": "/Users/joshualee/legacy-migrator/runs/legacy-migrator-fixture-test/original"
     },
     {
@@ -29,10 +29,11 @@
     {
       "stage": "migrate",
       "status": "failed",
-      "startedAt": "2026-07-07T10:07:33.317Z",
+      "startedAt": "2026-07-07T15:18:38.714Z",
       "executor": "fable",
-      "finishedAt": "2026-07-07T10:13:53.308Z",
-      "notes": "exit 1: ⚠ claude.ai connectors are disabled because ANTHROPIC_API_KEY or another auth source is set and takes precedence over your claude.ai login · Unset it to load your organization's connectors\n"
+      "finishedAt": "2026-07-07T15:23:55.346Z",
+      "notes": "gate failed: exit 1 (no summary found)",
+      "costUsd": 2.7072644999999995
     },
     {
       "stage": "review",
@@ -57,6 +58,21 @@
       "ts": "2026-07-07T10:06:30.000Z",
       "stage": "testgen",
       "rationale": "characterization/ toolchain mirrors the established dual-target harness (vitest+jsdom+@testing-library/react, TARGET=original|migrated via '@app' alias) from the prior react-redux-realworld-example-app run, scaled down (no router) for this fixture's smaller surface."
+    },
+    {
+      "ts": "2026-07-07T15:23:28.807Z",
+      "stage": "migrate",
+      "rationale": "Step 2 completed on resume: dep bump to react-redux@8.1.3/redux@4.2.1 found pre-applied but unverified; verification exposed a dual-React \"Invalid hook call\" failure (13/30), fixed by installing @testing-library/{react,dom,jest-dom} as devDependencies in migrated/ per the dual-target harness design — test tooling only, no runtime dep or source change."
+    },
+    {
+      "ts": "2026-07-07T15:23:28.807Z",
+      "stage": "migrate",
+      "rationale": "Step 3: store.js left byte-identical — optional export const reducer NOT added; testgen already achieved test isolation via vi.resetModules(), so the export would be an API-surface change with no consumer (rule 2)."
+    },
+    {
+      "ts": "2026-07-07T15:23:28.807Z",
+      "stage": "migrate",
+      "rationale": "Steps 4-5: Counter/TodoList converted class+connect -> function components with useSelector/useDispatch (+useState for TodoList). Preserved exactly: R2 no-trim falsy guard, R6 dispatch-before-clear ordering, R3 key={i} index keys. Selectors return the same primitive/array slices as the old mapStateToProps."
     }
   ],
   "testGates": [
@@ -74,6 +90,27 @@
       "cwd": "/Users/joshualee/legacy-migrator/runs/legacy-migrator-fixture-test/characterization",
       "ok": true,
       "summary": "Tests \u001b[22m \u001b[1m\u001b[32m30 passed\u001b[39m\u001b[22m\u001b[90m (30)\u001b[39m"
+    },
+    {
+      "ts": "2026-07-07T15:23:28.807Z",
+      "stage": "migrate",
+      "command": "npm run test:original && npm run test:migrated",
+      "cwd": "/Users/joshualee/legacy-migrator/runs/legacy-migrator-fixture-test/characterization",
+      "ok": true,
+      "summary": "Final gate: 30/30 green TARGET=original, 30/30 green TARGET=migrated; sweep found no connect/React.Component/bind(this) in migrated/src"
+    },
+    {
+      "ts": "2026-07-07T15:23:55.342Z",
+      "stage": "migrate",
+      "command": "npm test",
+      "cwd": "/Users/joshualee/legacy-migrator/runs/legacy-migrator-fixture-test/migrated",
+      "ok": false,
+      "summary": "exit 1 (no summary found)"
     }
-  ]
+  ],
+  "costTotalUsd": 2.7072644999999995,
+  "validationCommand": {
+    "command": "npm run test:migrated",
+    "cwd": "/Users/joshualee/legacy-migrator/runs/legacy-migrator-fixture-test/characterization"
+  }
 }

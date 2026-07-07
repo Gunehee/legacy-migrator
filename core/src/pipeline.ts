@@ -27,6 +27,15 @@ export interface AgentStage {
    * (governance rule 1). Stages without an executable gate omit it.
    */
   gateCommand?(ctx: RunContext): { command: string; cwd: string } | undefined;
+  /**
+   * Called once this stage's own gate passes; the result is persisted to the
+   * run record as `validationCommand` — the canonical, pipeline-known way
+   * later stages verify the migrated target. This lets e.g. `migrate`'s gate
+   * read a recorded command instead of assuming `migrated/`'s own
+   * package.json defines a compatible script (it may not — nothing forces a
+   * migrator agent to know that convention).
+   */
+  validationCommand?(ctx: RunContext): { command: string; cwd: string } | undefined;
 }
 
 export interface RunContext {
@@ -36,6 +45,8 @@ export interface RunContext {
   runDir: string; //      runs/<name>
   originalDir: string; // runs/<name>/original
   migratedDir: string; // runs/<name>/migrated
+  /** Set once testgen's gate has passed and recorded one; undefined before then. */
+  validationCommand?: { command: string; cwd: string };
 }
 
 export interface PipelineOptions {
@@ -67,6 +78,7 @@ export class Pipeline {
       runDir,
       originalDir: join(runDir, 'original'),
       migratedDir: join(runDir, 'migrated'),
+      validationCommand: record.validationCommand,
     };
   }
 
@@ -118,6 +130,11 @@ export class Pipeline {
         });
         return { ...result, status: 'error', error: `test gate failed: ${gateResult.summary}` };
       }
+    }
+
+    const validationCommand = stage.validationCommand?.(ctx);
+    if (validationCommand) {
+      this.store.setValidationCommand(record.name, validationCommand);
     }
 
     this.store.setStage(record.name, stage.stage, 'passed', { costUsd: result.costUsd });

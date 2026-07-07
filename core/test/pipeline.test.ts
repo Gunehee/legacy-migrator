@@ -1,4 +1,4 @@
-import { mkdtempSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -44,12 +44,14 @@ describe('Pipeline', () => {
   let pipeline: Pipeline;
   let fable: FakeAdapter;
   let sonnet: FakeAdapter;
+  let runsRoot: string;
 
   beforeEach(() => {
     fable = new FakeAdapter('fable');
     sonnet = new FakeAdapter('sonnet');
+    runsRoot = mkdtempSync(join(tmpdir(), 'pipe-'));
     pipeline = new Pipeline({
-      runsRoot: mkdtempSync(join(tmpdir(), 'pipe-')),
+      runsRoot,
       adapters: { fable, sonnet },
     });
   });
@@ -147,5 +149,97 @@ describe('Pipeline', () => {
     expect(rec.stages.find((s) => s.stage === 'analyze')!.status).toBe('failed');
     expect(rec.stages.find((s) => s.stage === 'analyze')!.costUsd).toBe(0.05);
     expect(rec.costTotalUsd).toBe(0.05);
+  });
+
+  describe('validationCommand — later stages must not assume migrated/ has its own test script', () => {
+    it('persists validationCommand only for a stage that declares the hook, once its own gate passes', () => {
+      const record = pipeline.store.create('demo', 'url', 'lane');
+      pipeline.runStage(
+        record,
+        stage({
+          stage: 'testgen',
+          taskType: 'testgen',
+          gateCommand: () => ({ command: 'node -e "process.exit(0)"', cwd: process.cwd() }),
+          validationCommand: (ctx) => ({ command: 'npm run test:migrated', cwd: `${ctx.runDir}/characterization` }),
+        }),
+      );
+      const rec = pipeline.store.load('demo');
+      expect(rec.validationCommand).toEqual({
+        command: 'npm run test:migrated',
+        cwd: join(runsRoot, 'demo', 'characterization'),
+      });
+    });
+
+    it('does not persist a validationCommand for a stage that never declares the hook', () => {
+      const record = pipeline.store.create('demo', 'url', 'lane');
+      pipeline.runStage(record, stage());
+      expect(pipeline.store.load('demo').validationCommand).toBeUndefined();
+    });
+
+    it(
+      "regression: migrate's gate passes via the recorded validationCommand even though migrated/'s own " +
+        'package.json has no test script at all — the exact bug this fix closes',
+      () => {
+        const record = pipeline.store.create('demo', 'url', 'lane');
+
+        // testgen: real characterization/ dir with a real npm script that succeeds.
+        const characterizationDir = join(runsRoot, 'demo', 'characterization');
+        mkdirSync(characterizationDir, { recursive: true });
+        writeFileSync(
+          join(characterizationDir, 'package.json'),
+          JSON.stringify({ name: 'characterization', scripts: { 'test:migrated': 'node -e "process.exit(0)"' } }),
+        );
+        pipeline.runStage(
+          record,
+          stage({
+            stage: 'testgen',
+            taskType: 'testgen',
+            gateCommand: () => ({ command: 'node -e "process.exit(0)"', cwd: process.cwd() }),
+            validationCommand: (ctx) => ({
+              command: 'npm run test:migrated',
+              cwd: `${ctx.runDir}/characterization`,
+            }),
+          }),
+        );
+
+        // migrate: migrated/ exists but deliberately has NO "test" script — only deps.
+        const migratedDir = join(runsRoot, 'demo', 'migrated');
+        mkdirSync(migratedDir, { recursive: true });
+        writeFileSync(join(migratedDir, 'package.json'), JSON.stringify({ name: 'migrated', dependencies: {} }));
+
+        const reloaded = pipeline.store.load('demo');
+        const result = pipeline.runStage(
+          reloaded,
+          stage({
+            stage: 'migrate',
+            taskType: 'migrate',
+            gateCommand: (ctx) => {
+              if (!ctx.validationCommand) throw new Error('no validationCommand recorded');
+              return ctx.validationCommand;
+            },
+          }),
+        );
+
+        expect(result.status).toBe('ok');
+        expect(pipeline.store.load('demo').stages.find((s) => s.stage === 'migrate')!.status).toBe('passed');
+      },
+    );
+
+    it('a gate that requires validationCommand throws a clear error if testgen never recorded one', () => {
+      const record = pipeline.store.create('demo', 'url', 'lane');
+      expect(() =>
+        pipeline.runStage(
+          record,
+          stage({
+            stage: 'migrate',
+            taskType: 'migrate',
+            gateCommand: (ctx) => {
+              if (!ctx.validationCommand) throw new Error('no validationCommand recorded');
+              return ctx.validationCommand;
+            },
+          }),
+        ),
+      ).toThrow(/no validationCommand recorded/);
+    });
   });
 });

@@ -52,14 +52,5 @@
   "50": "LICENSE.md",
   "51": "vite.config.js",
   "52": "LICENSE.md",
-  "53": "vitest.config.ts",
-  "54": "Migration Plan — legacy-migrator-fixture-test",
-  "55": "React Redux RealWorld Example App — Class-to-Hooks Migration",
-  "56": "package.json",
-  "57": "Migrate stage (2026-07-08, resumed — prior adapter attempt died on a credit error)",
-  "58": "package.json",
-  "59": "vitest.config.mjs",
-  "60": "binary-entrypoint.test.ts",
-  "61": "setup.js",
-  "62": "wiring.test.js"
+  "53": "vitest.config.ts"
 }

@@ -47,15 +47,42 @@ describe('agent definitions', () => {
     }
   });
 
-  it('gates testgen on the characterization suite and migrate/review on the migrated suite', () => {
+  it('gates testgen on the characterization suite against original', () => {
     expect(testGenerator.gateCommand!(ctx)).toEqual({
       command: 'npm test',
       cwd: '/runs/demo/characterization',
     });
-    expect(migrator.gateCommand!(ctx)).toEqual({ command: 'npm test', cwd: '/runs/demo/migrated' });
-    expect(reviewer.gateCommand!(ctx)).toEqual({ command: 'npm test', cwd: '/runs/demo/migrated' });
     expect(analyzer.gateCommand).toBeUndefined();
     expect(docWriter.gateCommand).toBeUndefined();
+  });
+
+  it('records the canonical validationCommand once testgen passes, pointed at the characterization suite', () => {
+    expect(testGenerator.validationCommand!(ctx)).toEqual({
+      command: 'npm run test:migrated',
+      cwd: '/runs/demo/characterization',
+    });
+    expect(migrator.validationCommand).toBeUndefined();
+    expect(reviewer.validationCommand).toBeUndefined();
+  });
+
+  it("migrate/review gate on the recorded validationCommand, not on migrated/'s own package.json", () => {
+    const withCommand: RunContext = {
+      ...ctx,
+      validationCommand: { command: 'npm run test:migrated', cwd: '/runs/demo/characterization' },
+    };
+    expect(migrator.gateCommand!(withCommand)).toEqual({
+      command: 'npm run test:migrated',
+      cwd: '/runs/demo/characterization',
+    });
+    expect(reviewer.gateCommand!(withCommand)).toEqual({
+      command: 'npm run test:migrated',
+      cwd: '/runs/demo/characterization',
+    });
+  });
+
+  it('migrate/review gates throw a clear error when no validationCommand was ever recorded', () => {
+    expect(() => migrator.gateCommand!(ctx)).toThrow(/no validationCommand recorded/);
+    expect(() => reviewer.gateCommand!(ctx)).toThrow(/no validationCommand recorded/);
   });
 
   it('keeps original/ immutable and migrated/ as the work area in the migrator prompt', () => {

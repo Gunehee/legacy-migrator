@@ -13,9 +13,19 @@ const GOVERNANCE = `Governance rules (non-negotiable):
 3. Log a one-line rationale for every non-trivial transformation decision to migration-log.md.
 4. Never delete or edit anything under original/ — work in the parallel migrated/ directory.`;
 
-/** The characterization/existing suite for a run; agents write it, gates run it. */
-export function testCommand(ctx: RunContext): { command: string; cwd: string } {
-  return { command: 'npm test', cwd: ctx.migratedDir };
+/**
+ * Reads the validationCommand recorded once testgen's gate passed. Migrate
+ * and review both gate on this rather than assuming migrated/'s own
+ * package.json defines a compatible test script — it may not, and nothing
+ * forces a migrator agent to know that convention.
+ */
+function requireValidationCommand(ctx: RunContext, stage: string): { command: string; cwd: string } {
+  if (!ctx.validationCommand) {
+    throw new Error(
+      `no validationCommand recorded for this run — the testgen stage must pass before ${stage} can be gated`,
+    );
+  }
+  return ctx.validationCommand;
 }
 
 export const analyzer: AgentStage = {
@@ -46,6 +56,14 @@ the CURRENT observable behavior of the code in ${ctx.originalDir} (inputs → ou
 user flows, edge cases visible in code). The tests must run against the ORIGINAL code and
 pass there before any migration starts — they are the safety net, not new feature tests.`,
   gateCommand: (ctx) => ({ command: 'npm test', cwd: `${ctx.runDir}/characterization` }),
+  // Recorded once the gate above passes: the ONE canonical command every
+  // later stage uses to validate the migrated target. Deterministic pipeline
+  // logic, not a convention an agent has to remember to wire into
+  // migrated/'s own package.json.
+  validationCommand: (ctx) => ({
+    command: 'npm run test:migrated',
+    cwd: `${ctx.runDir}/characterization`,
+  }),
 };
 
 export const migrator: AgentStage = {
@@ -59,7 +77,7 @@ ${ctx.originalDir} into the parallel directory ${ctx.migratedDir} (lane: ${ctx.l
 After each module run the full test suite (existing + characterization); if anything
 fails, fix it before the next module — never proceed in a known-broken state.
 Keep a running log in ${ctx.runDir}/migration-log.md: what changed, why, test status.`,
-  gateCommand: testCommand,
+  gateCommand: (ctx) => requireValidationCommand(ctx, 'migrate'),
 };
 
 export const reviewer: AgentStage = {
@@ -72,7 +90,7 @@ The migration in ${ctx.migratedDir} passes all tests. Do a full read-through pas
 quality: idiomatic modern patterns, no leftover dead code, no lingering legacy shims unless
 necessary. Write a short review report to ${ctx.runDir}/review-report.md with any remaining
 follow-ups. Only fix issues that keep the suite green; log rationale for each fix.`,
-  gateCommand: testCommand,
+  gateCommand: (ctx) => requireValidationCommand(ctx, 'review'),
 };
 
 export const docWriter: AgentStage = {

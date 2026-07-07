@@ -1,16 +1,16 @@
-# Graph Report - legacy-migrator  (2026-07-08)
+# Graph Report - legacy-migrator  (2026-07-07)
 
 ## Corpus Check
-- 159 files · ~39,794 words
+- 136 files · ~31,029 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 760 nodes · 1033 edges · 63 communities (52 shown, 11 thin omitted)
-- Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 55 edges (avg confidence: 0.53)
+- 596 nodes · 862 edges · 54 communities (40 shown, 14 thin omitted)
+- Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 45 edges (avg confidence: 0.53)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `177cff21`
+- Built from commit: `fa70aff0`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -61,15 +61,7 @@
 - [[_COMMUNITY_agent.test.js|agent.test.js]]
 - [[_COMMUNITY_App|App]]
 - [[_COMMUNITY_ProfileFavorites|ProfileFavorites]]
-- [[_COMMUNITY_ArticlePreview.js|ArticlePreview.js]]
 - [[_COMMUNITY_target-rationale|target-rationale.md]]
-- [[_COMMUNITY_Migration Plan — legacy-migrator-fixture-test|Migration Plan — legacy-migrator-fixture-test]]
-- [[_COMMUNITY_React Redux RealWorld Example App — Class-to-Hooks Migration|React Redux RealWorld Example App — Class-to-Hooks Migration]]
-- [[_COMMUNITY_package.json|package.json]]
-- [[_COMMUNITY_Migrate stage (2026-07-08, resumed — prior adapter attempt died on a credit error)|Migrate stage (2026-07-08, resumed — prior adapter attempt died on a credit error)]]
-- [[_COMMUNITY_package.json|package.json]]
-- [[_COMMUNITY_vitest.config.mjs|vitest.config.mjs]]
-- [[_COMMUNITY_binary-entrypoint.test.ts|binary-entrypoint.test.ts]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `RunStore` - 13 edges
@@ -80,29 +72,29 @@
 6. `renderApp()` - 10 edges
 7. `Router` - 9 edges
 8. `Editor` - 9 edges
-9. `React Redux RealWorld Example App — Class-to-Hooks Migration` - 9 edges
-10. `Migration log — react-redux-realworld-example-app` - 9 edges
+9. `Migration log — react-redux-realworld-example-app` - 9 edges
+10. `TaskResult` - 8 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `AgentStage` --references--> `StageName`  [EXTRACTED]
-  core/src/pipeline.ts → core/src/state.ts
 - `Pipeline` --references--> `RunStore`  [EXTRACTED]
   core/src/pipeline.ts → core/src/state.ts
 - `RoutingDecision` --references--> `Effort`  [EXTRACTED]
   core/src/router.ts → core/src/task.ts
 - `Rule` --references--> `Effort`  [EXTRACTED]
   core/src/router.ts → core/src/task.ts
-- `runFake()` --calls--> `newTask()`  [EXTRACTED]
-  core/test/adapters.test.ts → core/src/task.ts
+- `getMiddleware()` --indirect_call--> `promiseMiddleware()`  [INFERRED]
+  runs/react-redux-realworld-example-app/migrated/src/store.js → runs/react-redux-realworld-example-app/migrated/src/middleware.js
+- `getMiddleware()` --indirect_call--> `localStorageMiddleware()`  [INFERRED]
+  runs/react-redux-realworld-example-app/migrated/src/store.js → runs/react-redux-realworld-example-app/migrated/src/middleware.js
 
 ## Import Cycles
 - None detected.
 
-## Communities (63 total, 11 thin omitted)
+## Communities (54 total, 14 thin omitted)
 
 ### Community 0 - "pipeline.ts"
-Cohesion: 0.06
-Nodes (31): ADAPTER_FACTORIES, AdapterFactory, buildAdapter(), ClaudeCodeAdapter, ExecutorAdapter, MAX_TURNS, GateResult, runTestGate() (+23 more)
+Cohesion: 0.07
+Nodes (28): ADAPTER_FACTORIES, AdapterFactory, buildAdapter(), ClaudeCodeAdapter, ExecutorAdapter, MAX_TURNS, GateResult, runTestGate() (+20 more)
 
 ### Community 1 - "dependencies"
 Cohesion: 0.06
@@ -125,24 +117,24 @@ Cohesion: 0.35
 Nodes (8): articlesList(), author, makeArticle(), makeComment(), tags, user, agentMockFactory(), renderApp()
 
 ### Community 6 - "RunStore"
-Cohesion: 0.19
-Nodes (8): Decision, now(), RunStore, STAGE_ORDER, StageName, StageRecord, StageStatus, TestGateRecord
+Cohesion: 0.21
+Nodes (7): Decision, now(), RunStore, STAGE_ORDER, StageRecord, StageStatus, TestGateRecord
 
 ### Community 7 - "App.jsx"
-Cohesion: 0.21
+Cohesion: 0.19
 Nodes (7): Editor(), Header(), ListErrors(), Login(), Register(), emptyForm, Settings()
 
 ### Community 8 - "agent.js"
-Cohesion: 0.18
-Nodes (6): Articles, Auth, Comments, Profile, requests, Tags
+Cohesion: 0.15
+Nodes (8): Articles, Auth, Comments, Profile, requests, Tags, ArticlePreview(), ListPagination()
 
 ### Community 9 - "package.json"
 Cohesion: 0.13
 Nodes (14): description, devDependencies, @types/node, typescript, vitest, name, private, scripts (+6 more)
 
 ### Community 13 - "App.js"
-Cohesion: 0.10
-Nodes (15): freshApp(), freshStore(), Counter(), addTodo(), decrement(), increment(), reducer, store (+7 more)
+Cohesion: 0.26
+Nodes (6): localStorageMiddleware(), promiseMiddleware(), getMiddleware(), history, myRouterMiddleware, store
 
 ### Community 14 - "package.json"
 Cohesion: 0.17
@@ -153,16 +145,12 @@ Cohesion: 0.20
 Nodes (3): Banner(), Home, Tags()
 
 ### Community 16 - "index.jsx"
-Cohesion: 0.24
-Nodes (4): Banner(), Home(), MainView(), Tags()
+Cohesion: 0.21
+Nodes (5): ArticleList(), Banner(), Home(), MainView(), Tags()
 
 ### Community 17 - "agent.js"
-Cohesion: 0.13
+Cohesion: 0.17
 Nodes (7): Articles, Auth, Comments, Profile, requests, superagent, Tags
-
-### Community 20 - "Profile.js"
-Cohesion: 0.18
-Nodes (3): mapStateToProps(), Profile, ProfileFavorites
 
 ### Community 21 - "compilerOptions"
 Cohesion: 0.17
@@ -177,8 +165,8 @@ Cohesion: 0.18
 Nodes (10): dependencies, yaml, exports, main, name, scripts, build, type (+2 more)
 
 ### Community 24 - "Profile.jsx"
-Cohesion: 0.16
-Nodes (6): ArticleList(), ArticlePreview(), ListPagination(), Profile(), ProfileView(), ProfileFavorites()
+Cohesion: 0.20
+Nodes (3): Profile(), ProfileView(), ProfileFavorites()
 
 ### Community 25 - "index.ts"
 Cohesion: 0.33
@@ -197,8 +185,8 @@ Cohesion: 0.33
 Nodes (4): Comment(), CommentInput(), CommentList(), DeleteButton()
 
 ### Community 29 - "index.ts"
-Cohesion: 0.44
-Nodes (7): DEFAULT_RUNS_ROOT, isMain, main(), renderStatus(), repoNameFromUrl(), runCommand(), statusCommand()
+Cohesion: 0.54
+Nodes (6): DEFAULT_RUNS_ROOT, main(), renderStatus(), repoNameFromUrl(), runCommand(), statusCommand()
 
 ### Community 32 - "tsconfig.json"
 Cohesion: 0.29
@@ -236,65 +224,25 @@ Nodes (4): alias, appSrc, HERE, jsxInJs
 Cohesion: 0.50
 Nodes (3): Commands, Layout, legacy-migrator — governance rules
 
-### Community 44 - "App"
-Cohesion: 0.09
-Nodes (21): dependencies, react, react-dom, react-redux, redux, description, devDependencies, cross-env (+13 more)
-
-### Community 45 - "ProfileFavorites"
-Cohesion: 0.12
-Nodes (9): Counter, mapDispatchToProps(), addTodo(), decrement(), increment(), reducer, store, mapDispatchToProps() (+1 more)
-
-### Community 46 - "ArticlePreview.js"
-Cohesion: 0.12
-Nodes (16): 1단계: 기존 동작 고정 (기초 다지기), 2단계: 단계별 전환 (M0~M7), 3단계: 마이그레이션 후 검증, 결과: Before & After, 다음 단계 (후속 작업), 데모 성격, 무엇을 했는가, 소요 시간 및 방식 (+8 more)
-
-### Community 54 - "Migration Plan — legacy-migrator-fixture-test"
-Cohesion: 0.13
-Nodes (14): 1. Architecture map, 2. Legacy patterns → modern equivalents, 3. Risk areas, 4. Ordered migration sequence, 5. Characterization-test plan (coverage is currently 0%), Counter.js (render + interaction, fresh store per test via `<Provider>`), Dependency graph, Entry points (+6 more)
-
-### Community 55 - "React Redux RealWorld Example App — Class-to-Hooks Migration"
-Cohesion: 0.13
-Nodes (14): Architecture Transformation, Attribution, Characterization Suite, Contents, Future Modernization (out of this migration's scope), How to Run, Key Technical Decisions, Migrated App (dev server) (+6 more)
-
-### Community 56 - "package.json"
-Cohesion: 0.14
-Nodes (13): dependencies, react, react-dom, react-redux, redux, description, devDependencies, @testing-library/dom (+5 more)
-
-### Community 57 - "Migrate stage (2026-07-08, resumed — prior adapter attempt died on a credit error)"
-Cohesion: 0.17
-Nodes (11): Analyze stage (2026-07-07), Migrate stage (2026-07-07), Migrate stage (2026-07-08, resumed — prior adapter attempt died on a credit error), Migration log — legacy-migrator-fixture-test, Step 1 — scaffold `migrated/`, Step 2 — dependency upgrade only (no source changes), Step 3 — store.js surface decision (R1), Step 4 — Counter.js → function component + hooks (+3 more)
-
-### Community 58 - "package.json"
-Cohesion: 0.20
-Nodes (9): dependencies, react, react-dom, react-redux, redux, description, name, private (+1 more)
-
-### Community 59 - "vitest.config.mjs"
-Cohesion: 0.40
-Nodes (4): alias, appSrc, HERE, jsxInJs
-
-### Community 60 - "binary-entrypoint.test.ts"
-Cohesion: 0.50
-Nodes (3): distEntry, here, repoRoot
-
 ## Knowledge Gaps
-- **286 isolated node(s):** `name`, `version`, `type`, `main`, `types` (+281 more)
+- **192 isolated node(s):** `name`, `version`, `type`, `main`, `types` (+187 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **11 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **14 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `renderApp()` connect `fixtures.js` to `App.js`, `App.jsx`?**
-  _High betweenness centrality (0.078) - this node is a cross-community bridge._
-- **Why does `freshApp()` connect `App.js` to `ProfileFavorites`?**
-  _High betweenness centrality (0.038) - this node is a cross-community bridge._
+- **Why does `SettingsForm` connect `SettingsForm` to `Settings.js`?**
+  _High betweenness centrality (0.035) - this node is a cross-community bridge._
+- **Why does `SettingsForm()` connect `SettingsForm` to `App.jsx`?**
+  _High betweenness centrality (0.030) - this node is a cross-community bridge._
+- **Why does `renderApp()` connect `fixtures.js` to `App.js`?**
+  _High betweenness centrality (0.022) - this node is a cross-community bridge._
 - **What connects `name`, `version`, `type` to the rest of the system?**
-  _286 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _192 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `pipeline.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.06298076923076923 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07130333138515488 - nodes in this community are weakly interconnected._
 - **Should `dependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.06451612903225806 - nodes in this community are weakly interconnected._
 - **Should `index.js` be split into smaller, more focused modules?**
   _Cohesion score 0.082010582010582 - nodes in this community are weakly interconnected._
-- **Should `dependencies` be split into smaller, more focused modules?**
-  _Cohesion score 0.07407407407407407 - nodes in this community are weakly interconnected._

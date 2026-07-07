@@ -25,8 +25,8 @@
     "semantic_hash": ""
   },
   "cli/src/index.ts": {
-    "mtime": 1783418438.616215,
-    "ast_hash": "98746a496a81ddcdfb9e8f20c2048c6c",
+    "mtime": 1783400286.2931654,
+    "ast_hash": "7aaf800e2c370cd69a93c74b77037424",
     "semantic_hash": ""
   },
   "cli/test/cli.test.ts": {
@@ -45,8 +45,8 @@
     "semantic_hash": ""
   },
   "core/src/adapters.ts": {
-    "mtime": 1783425455.756341,
-    "ast_hash": "1d53a54f8297cf9ac8d40d1d30d79ad7",
+    "mtime": 1783400190.4449735,
+    "ast_hash": "df7e5e7ef62fa257e39e611be0e678e3",
     "semantic_hash": ""
   },
   "core/src/eval.ts": {
@@ -60,8 +60,8 @@
     "semantic_hash": ""
   },
   "core/src/pipeline.ts": {
-    "mtime": 1783425339.9594054,
-    "ast_hash": "bb961098f191b8079a5ec0087c52b141",
+    "mtime": 1783400235.6054955,
+    "ast_hash": "ec981cde8cf3507d48ee4f5955853939",
     "semantic_hash": ""
   },
   "core/src/router.ts": {
@@ -70,8 +70,8 @@
     "semantic_hash": ""
   },
   "core/src/state.ts": {
-    "mtime": 1783425331.3472183,
-    "ast_hash": "1f870c87bccae7c510dfef95afde0df3",
+    "mtime": 1783400203.0751925,
+    "ast_hash": "bf5f907da571a3b835bb01af9e0e3988",
     "semantic_hash": ""
   },
   "core/src/task.ts": {
@@ -85,8 +85,8 @@
     "semantic_hash": ""
   },
   "core/test/pipeline.test.ts": {
-    "mtime": 1783425432.945219,
-    "ast_hash": "d219c081e9e1e70ddf070deab63c71c2",
+    "mtime": 1783400338.7485478,
+    "ast_hash": "874ea249ffd106c72eae0954acd30e91",
     "semantic_hash": ""
   },
   "core/test/router.test.ts": {
@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "core/test/state.test.ts": {
-    "mtime": 1783425411.5086093,
-    "ast_hash": "c7d2fb5f893140aada216e6f3ab1f447",
+    "mtime": 1783400312.6956797,
+    "ast_hash": "30ef94abe8aafaabdbb3e2cf067208ef",
     "semantic_hash": ""
   },
   "core/tsconfig.json": {
@@ -625,8 +625,8 @@
     "semantic_hash": ""
   },
   "runs/react-redux-realworld-example-app/run-state.json": {
-    "mtime": 1783411716.6510098,
-    "ast_hash": "6718e909df23b105d707bca6ccfa51a9",
+    "mtime": 1783411465.3654797,
+    "ast_hash": "4cb6cf86bac43fce6052f7d6a429798f",
     "semantic_hash": ""
   },
   "tsconfig.base.json": {
@@ -697,121 +697,6 @@
   "runs/react-redux-realworld-example-app/original/project-logo.png": {
     "mtime": 1783400046.5937612,
     "ast_hash": "8cbe505bd657b9cc9d1a42a5135ffd17",
-    "semantic_hash": ""
-  },
-  "cli/test/binary-entrypoint.test.ts": {
-    "mtime": 1783418425.9210107,
-    "ast_hash": "891c23d66ae897301efd9fd9d340de14",
-    "semantic_hash": ""
-  },
-  "core/test/adapters.test.ts": {
-    "mtime": 1783425397.5515225,
-    "ast_hash": "98257ad3650c71cc006d2de29480d779",
-    "semantic_hash": ""
-  },
-  "runs/legacy-migrator-fixture-test/characterization/package.json": {
-    "mtime": 1783418704.2719097,
-    "ast_hash": "680b6b96dede7cbcf6ccfcfae95e771d",
-    "semantic_hash": ""
-  },
-  "runs/legacy-migrator-fixture-test/characterization/tests/Counter.test.js": {
-    "mtime": 1783418745.9735446,
-    "ast_hash": "2918b7cd1a4ec6cd256d90f64d61512f",
-    "semantic_hash": ""
-  },
-  "runs/legacy-migrator-fixture-test/characterization/tests/TodoList.test.js": {
-    "mtime": 1783418756.273652,
-    "ast_hash": "0594d3153f48af4c8b07280c88b5ab73",
-    "semantic_hash": ""
-  },
-  "runs/legacy-migrator-fixture-test/characterization/tests/helpers/freshApp.js": {
-    "mtime": 1783418725.1928446,
-    "ast_hash": "ba41bd0b79e081207daa0da4ac8fee42",
-    "semantic_hash": ""
-  },
-  "runs/legacy-migrator-fixture-test/characterization/tests/setup.js": {
-    "mtime": 1783418717.916159,
-    "ast_hash": "858f4edef1a50bdfda22655983623619",
-    "semantic_hash": ""
-  },
-  "runs/legacy-migrator-fixture-test/characterization/tests/store.test.js": {
-    "mtime": 1783418737.759845,
-    "ast_hash": "3706ccbe03780b9bc092ab61a1fcb720",
-    "semantic_hash": ""
-  },
-  "runs/legacy-migrator-fixture-test/characterization/tests/wiring.test.js": {
-    "mtime": 1783418761.943577,
-    "ast_hash": "4cf326666b0a43571580ea830f16fbd4",
-    "semantic_hash": ""
-  },
-  "runs/legacy-migrator-fixture-test/characterization/vitest.config.mjs": {
-    "mtime": 1783419231.391885,
-    "ast_hash": "6b2b33a7d93eb9d013f0ab5304207408",
-    "semantic_hash": ""
-  },
-  "runs/legacy-migrator-fixture-test/migrated/package.json": {
-    "mtime": 1783437650.9473755,
-    "ast_hash": "078b97295b5103057aba83fe9bc33398",
-    "semantic_hash": ""
-  },
-  "runs/legacy-migrator-fixture-test/migrated/src/Counter.js": {
-    "mtime": 1783437705.9521642,
-    "ast_hash": "c6f2a459688735610268c86e98cf068c",
-    "semantic_hash": ""
-  },
-  "runs/legacy-migrator-fixture-test/migrated/src/TodoList.js": {
-    "mtime": 1783437729.215382,
-    "ast_hash": "2d8740dd276d11f7a866dba9b016f666",
-    "semantic_hash": ""
-  },
-  "runs/legacy-migrator-fixture-test/migrated/src/store.js": {
-    "mtime": 1783418472.0,
-    "ast_hash": "297eb3f635bd5618babc5be8504c49af",
-    "semantic_hash": ""
-  },
-  "runs/legacy-migrator-fixture-test/original/package.json": {
-    "mtime": 1783418472.616256,
-    "ast_hash": "58d2fe769c8b688f2d8af19a330cd9c9",
-    "semantic_hash": ""
-  },
-  "runs/legacy-migrator-fixture-test/original/src/Counter.js": {
-    "mtime": 1783418472.6164353,
-    "ast_hash": "9847e934f4dd9ab42ed1dc2dc0baf239",
-    "semantic_hash": ""
-  },
-  "runs/legacy-migrator-fixture-test/original/src/TodoList.js": {
-    "mtime": 1783418472.616548,
-    "ast_hash": "c9e05111b22f795bd8fcf3ce41c889e9",
-    "semantic_hash": ""
-  },
-  "runs/legacy-migrator-fixture-test/original/src/store.js": {
-    "mtime": 1783418472.6166644,
-    "ast_hash": "297eb3f635bd5618babc5be8504c49af",
-    "semantic_hash": ""
-  },
-  "runs/legacy-migrator-fixture-test/run-state.json": {
-    "mtime": 1783437808.8088734,
-    "ast_hash": "95ccd9f9e60fabd121927a5d8e6f5c89",
-    "semantic_hash": ""
-  },
-  "runs/legacy-migrator-fixture-test/migration-log.md": {
-    "mtime": 1783437792.4935255,
-    "ast_hash": "df25ede1b95bc801450c3f6eb370fbe4",
-    "semantic_hash": ""
-  },
-  "runs/legacy-migrator-fixture-test/migration-plan.md": {
-    "mtime": 1783418577.6901705,
-    "ast_hash": "4164d85028830fa45d3efaefa01b0062",
-    "semantic_hash": ""
-  },
-  "runs/react-redux-realworld-example-app/README.md": {
-    "mtime": 1783411654.1493096,
-    "ast_hash": "ebc5c1b9310d439c419419a02fa774b3",
-    "semantic_hash": ""
-  },
-  "runs/react-redux-realworld-example-app/one-pager.md": {
-    "mtime": 1783411654.14879,
-    "ast_hash": "6a29d6b97f60eb3447b22d828d1a766b",
     "semantic_hash": ""
   }
 }

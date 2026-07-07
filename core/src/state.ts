@@ -57,6 +57,13 @@ export interface RunRecord {
   testGates: TestGateRecord[];
   /** Running total of every stage's costUsd recorded so far, pass or fail. */
   costTotalUsd?: number;
+  /**
+   * The canonical command (recorded once testgen's gate passes) for
+   * validating the migrated target against the same characterization suite
+   * the original was verified against. Later stages' gates read this instead
+   * of assuming migrated/ has its own compatible test script.
+   */
+  validationCommand?: { command: string; cwd: string };
 }
 
 const now = () => new Date().toISOString();
@@ -130,6 +137,13 @@ export class RunStore {
   logTestGate(name: string, gate: Omit<TestGateRecord, 'ts'>): RunRecord {
     const record = this.load(name);
     record.testGates.push({ ts: now(), ...gate });
+    this.save(record);
+    return record;
+  }
+
+  setValidationCommand(name: string, cmd: { command: string; cwd: string }): RunRecord {
+    const record = this.load(name);
+    record.validationCommand = cmd;
     this.save(record);
     return record;
   }
