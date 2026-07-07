@@ -19,7 +19,10 @@
     },
     {
       "stage": "testgen",
-      "status": "pending"
+      "status": "passed",
+      "finishedAt": "2026-07-07T05:22:11.111Z",
+      "executor": "sonnet",
+      "notes": "18 files / 157 tests: reducers(83) middleware(12) agent(28) flows(26) + harness"
     },
     {
       "stage": "migrate",
@@ -68,7 +71,21 @@
       "ts": "2026-07-07T05:04:59.910Z",
       "stage": "analyze",
       "rationale": "Known upstream bugs preserved, not fixed (pagination page-size mismatch, jwt '' on logout, undefined controlled inputs, DELETE_COMMENT null assumption)"
+    },
+    {
+      "ts": "2026-07-07T05:22:11.113Z",
+      "stage": "testgen",
+      "rationale": "Characterized 7 as-is behaviors incl. DELETE_COMMENT throw on undefined comments, logout jwt=''  not removeItem, settings ASYNC_START no subtype gate, unreachable PROFILE_FAVORITES_* action types, omitSlug slug:undefined key, marked sanitize escaping, unguarded favorite dispatch"
     }
   ],
-  "testGates": []
+  "testGates": [
+    {
+      "ts": "2026-07-07T05:22:11.108Z",
+      "stage": "testgen",
+      "command": "TARGET=original npx vitest run",
+      "cwd": "runs/react-redux-realworld-example-app/characterization",
+      "ok": true,
+      "summary": "Tests  157 passed (157) — golden master green on ORIGINAL"
+    }
+  ]
 }
