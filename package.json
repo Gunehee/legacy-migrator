@@ -1,0 +1,22 @@
+{
+  "name": "legacy-migrator",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Legacy-codebase migration agent: analyze, characterize, migrate, review, document — with per-stage model routing.",
+  "type": "module",
+  "workspaces": [
+    "core",
+    "agents",
+    "cli"
+  ],
+  "scripts": {
+    "build": "tsc -b core agents cli",
+    "test": "vitest run",
+    "typecheck": "tsc -b core agents cli --noEmit false"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^3.0.0"
+  }
+}

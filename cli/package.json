@@ -1,0 +1,16 @@
+{
+  "name": "@legacy-migrator/cli",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "bin": {
+    "legacy-migrator": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@legacy-migrator/agents": "0.1.0",
+    "@legacy-migrator/core": "0.1.0"
+  }
+}

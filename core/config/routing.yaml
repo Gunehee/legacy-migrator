@@ -1,0 +1,25 @@
+# Routing ruleset — the single source of truth for executor selection.
+#
+# Each rule:
+#   executor:  adapter name registered in core/src/adapters.ts
+#   effort:    low | medium | high (adapters map this to a max-turns budget)
+#   fallback:  optional adapter used when the primary is unavailable
+#
+# Adding a new executor = add rules here + register an adapter factory.
+# Pipeline and router code must not change.
+
+default:
+  executor: sonnet
+  effort: medium
+
+task_types:
+  # deep whole-codebase reasoning → Fable 5
+  analyze:  {executor: fable, effort: high}
+  migrate:  {executor: fable, effort: high}
+
+  # structured, verifiable work → Sonnet
+  testgen:  {executor: sonnet, effort: high}
+  review:   {executor: sonnet, effort: medium}
+
+  # pattern-following writing → Haiku
+  document: {executor: haiku, effort: low}

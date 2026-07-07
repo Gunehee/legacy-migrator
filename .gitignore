@@ -1,0 +1,7 @@
+node_modules/
+dist/
+*.tsbuildinfo
+runs/**/node_modules/
+runs/**/build/
+runs/**/coverage/
+.DS_Store
