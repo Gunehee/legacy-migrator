@@ -10,7 +10,9 @@
  * renders run state from core's RunStore.
  */
 
+import { realpathSync } from 'node:fs';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 
 import { Pipeline, RunStore, type RunRecord } from '@legacy-migrator/core';
@@ -122,7 +124,18 @@ export function main(argv = process.argv.slice(2)): void {
   }
 }
 
-// Only run when invoked as a binary, not when imported by tests.
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Only run when invoked as a binary, not when imported by tests. Compares
+// resolved real paths (not raw import.meta.url vs argv[1]) so this still
+// matches when the binary is reached through a symlink, as npm link and
+// npm install -g both do for every globally installed CLI.
+const isMain = (() => {
+  try {
+    return fileURLToPath(import.meta.url) === realpathSync(process.argv[1]);
+  } catch {
+    return false;
+  }
+})();
+
+if (isMain) {
   main();
 }
