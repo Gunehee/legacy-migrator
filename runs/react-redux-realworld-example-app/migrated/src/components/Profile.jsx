@@ -1,8 +1,8 @@
 import ArticleList from './ArticleList';
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import agent from '../agent';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   FOLLOW_USER,
   UNFOLLOW_USER,
@@ -10,8 +10,8 @@ import {
   PROFILE_PAGE_UNLOADED
 } from '../constants/actionTypes';
 
-const EditProfileSettings = props => {
-  if (props.isUser) {
+const EditProfileSettings = ({ isUser }) => {
+  if (isUser) {
     return (
       <Link
         to="/settings"
@@ -23,13 +23,13 @@ const EditProfileSettings = props => {
   return null;
 };
 
-const FollowUserButton = props => {
-  if (props.isUser) {
+const FollowUserButton = ({ isUser, user, follow, unfollow }) => {
+  if (isUser) {
     return null;
   }
 
   let classes = 'btn btn-sm action-btn';
-  if (props.user.following) {
+  if (user.following) {
     classes += ' btn-secondary';
   } else {
     classes += ' btn-outline-secondary';
@@ -37,10 +37,10 @@ const FollowUserButton = props => {
 
   const handleClick = ev => {
     ev.preventDefault();
-    if (props.user.following) {
-      props.unfollow(props.user.username)
+    if (user.following) {
+      unfollow(user.username)
     } else {
-      props.follow(props.user.username)
+      follow(user.username)
     }
   };
 
@@ -50,121 +50,130 @@ const FollowUserButton = props => {
       onClick={handleClick}>
       <i className="ion-plus-round"></i>
       &nbsp;
-      {props.user.following ? 'Unfollow' : 'Follow'} {props.user.username}
+      {user.following ? 'Unfollow' : 'Follow'} {user.username}
     </button>
   );
 };
 
-const mapStateToProps = state => ({
-  ...state.articleList,
-  currentUser: state.common.currentUser,
-  profile: state.profile
-});
+const ProfileTabs = ({ username, activeTab }) => (
+  <ul className="nav nav-pills outline-active">
+    <li className="nav-item">
+      <Link
+        className={activeTab === 'articles' ? 'nav-link active' : 'nav-link'}
+        to={`/@${username}`}>
+        My Articles
+      </Link>
+    </li>
 
-const mapDispatchToProps = dispatch => ({
-  onFollow: username => dispatch({
+    <li className="nav-item">
+      <Link
+        className={activeTab === 'favorites' ? 'nav-link active' : 'nav-link'}
+        to={`/@${username}/favorites`}>
+        Favorited Articles
+      </Link>
+    </li>
+  </ul>
+);
+
+/**
+ * Shared page body for /@:username and /@:username/favorites — replaces the
+ * original's `ProfileFavorites extends Profile` class inheritance.
+ * `buildLoader(username)` returns the { pager, payload } for PROFILE_PAGE_LOADED.
+ */
+export const ProfileView = ({ activeTab, buildLoader }) => {
+  const { pager, articles, articlesCount, currentPage } = useSelector(state => state.articleList);
+  const currentUser = useSelector(state => state.common.currentUser);
+  const profile = useSelector(state => state.profile);
+  const dispatch = useDispatch();
+  const { username } = useParams();
+
+  const onFollow = username => dispatch({
     type: FOLLOW_USER,
     payload: agent.Profile.follow(username)
-  }),
-  onLoad: payload => dispatch({ type: PROFILE_PAGE_LOADED, payload }),
-  onUnfollow: username => dispatch({
+  });
+  const onUnfollow = username => dispatch({
     type: UNFOLLOW_USER,
     payload: agent.Profile.unfollow(username)
-  }),
-  onUnload: () => dispatch({ type: PROFILE_PAGE_UNLOADED })
-});
+  });
 
-class Profile extends React.Component {
-  componentWillMount() {
-    this.props.onLoad(Promise.all([
-      agent.Profile.get(this.props.match.params.username),
-      agent.Articles.byAuthor(this.props.match.params.username)
-    ]));
+  // load once on mount, like componentWillMount did — the original never
+  // refetched on param change either (no componentWillReceiveProps)
+  useEffect(() => {
+    const { pager, payload } = buildLoader(username);
+    dispatch({ type: PROFILE_PAGE_LOADED, pager, payload });
+    return () => {
+      dispatch({ type: PROFILE_PAGE_UNLOADED });
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // NB: initial state.profile is {} (truthy) — like the original, the empty
+  // shell renders before PROFILE_PAGE_LOADED lands
+  if (!profile) {
+    return null;
   }
 
-  componentWillUnmount() {
-    this.props.onUnload();
-  }
+  const isUser = currentUser &&
+    profile.username === currentUser.username;
 
-  renderTabs() {
-    return (
-      <ul className="nav nav-pills outline-active">
-        <li className="nav-item">
-          <Link
-            className="nav-link active"
-            to={`/@${this.props.profile.username}`}>
-            My Articles
-          </Link>
-        </li>
+  return (
+    <div className="profile-page">
 
-        <li className="nav-item">
-          <Link
-            className="nav-link"
-            to={`/@${this.props.profile.username}/favorites`}>
-            Favorited Articles
-          </Link>
-        </li>
-      </ul>
-    );
-  }
-
-  render() {
-    const profile = this.props.profile;
-    if (!profile) {
-      return null;
-    }
-
-    const isUser = this.props.currentUser &&
-      this.props.profile.username === this.props.currentUser.username;
-
-    return (
-      <div className="profile-page">
-
-        <div className="user-info">
-          <div className="container">
-            <div className="row">
-              <div className="col-xs-12 col-md-10 offset-md-1">
-
-                <img src={profile.image} className="user-img" alt={profile.username} />
-                <h4>{profile.username}</h4>
-                <p>{profile.bio}</p>
-
-                <EditProfileSettings isUser={isUser} />
-                <FollowUserButton
-                  isUser={isUser}
-                  user={profile}
-                  follow={this.props.onFollow}
-                  unfollow={this.props.onUnfollow}
-                  />
-
-              </div>
-            </div>
-          </div>
-        </div>
-
+      <div className="user-info">
         <div className="container">
           <div className="row">
-
             <div className="col-xs-12 col-md-10 offset-md-1">
 
-              <div className="articles-toggle">
-                {this.renderTabs()}
-              </div>
+              <img src={profile.image} className="user-img" alt={profile.username} />
+              <h4>{profile.username}</h4>
+              <p>{profile.bio}</p>
 
-              <ArticleList
-                pager={this.props.pager}
-                articles={this.props.articles}
-                articlesCount={this.props.articlesCount}
-                state={this.props.currentPage} />
+              <EditProfileSettings isUser={isUser} />
+              <FollowUserButton
+                isUser={isUser}
+                user={profile}
+                follow={onFollow}
+                unfollow={onUnfollow}
+                />
+
             </div>
-
           </div>
         </div>
-
       </div>
-    );
-  }
-}
 
-export default connect(mapStateToProps, mapDispatchToProps)(Profile);
-export { Profile, mapStateToProps };
+      <div className="container">
+        <div className="row">
+
+          <div className="col-xs-12 col-md-10 offset-md-1">
+
+            <div className="articles-toggle">
+              <ProfileTabs username={profile.username} activeTab={activeTab} />
+            </div>
+
+            <ArticleList
+              pager={pager}
+              articles={articles}
+              articlesCount={articlesCount}
+              state={currentPage} />
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  );
+};
+
+const profileLoader = username => ({
+  pager: undefined,
+  payload: Promise.all([
+    agent.Profile.get(username),
+    agent.Articles.byAuthor(username)
+  ])
+});
+
+const Profile = () => (
+  <ProfileView activeTab="articles" buildLoader={profileLoader} />
+);
+
+export default Profile;

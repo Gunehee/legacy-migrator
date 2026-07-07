@@ -1,73 +1,70 @@
 import Banner from './Banner';
 import MainView from './MainView';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Tags from './Tags';
 import agent from '../../agent';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   HOME_PAGE_LOADED,
   HOME_PAGE_UNLOADED,
   APPLY_TAG_FILTER
 } from '../../constants/actionTypes';
 
-const Promise = global.Promise;
+const Home = () => {
+  const tags = useSelector(state => state.home.tags);
+  const appName = useSelector(state => state.common.appName);
+  const token = useSelector(state => state.common.token);
+  const dispatch = useDispatch();
 
-const mapStateToProps = state => ({
-  ...state.home,
-  appName: state.common.appName,
-  token: state.common.token
-});
+  const onClickTag = (tag, pager, payload) =>
+    dispatch({ type: APPLY_TAG_FILTER, tag, pager, payload });
 
-const mapDispatchToProps = dispatch => ({
-  onClickTag: (tag, pager, payload) =>
-    dispatch({ type: APPLY_TAG_FILTER, tag, pager, payload }),
-  onLoad: (tab, pager, payload) =>
-    dispatch({ type: HOME_PAGE_LOADED, tab, pager, payload }),
-  onUnload: () =>
-    dispatch({  type: HOME_PAGE_UNLOADED })
-});
-
-class Home extends React.Component {
-  componentWillMount() {
-    const tab = this.props.token ? 'feed' : 'all';
-    const articlesPromise = this.props.token ?
+  // load once on mount, like componentWillMount did — token is read at mount
+  // time only; every token transition routes through a redirect that remounts
+  // this page.
+  useEffect(() => {
+    const tab = token ? 'feed' : 'all';
+    const articlesPromise = token ?
       agent.Articles.feed :
       agent.Articles.all;
 
-    this.props.onLoad(tab, articlesPromise, Promise.all([agent.Tags.getAll(), articlesPromise()]));
-  }
+    dispatch({
+      type: HOME_PAGE_LOADED,
+      tab,
+      pager: articlesPromise,
+      payload: Promise.all([agent.Tags.getAll(), articlesPromise()])
+    });
+    return () => {
+      dispatch({ type: HOME_PAGE_UNLOADED });
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  componentWillUnmount() {
-    this.props.onUnload();
-  }
+  return (
+    <div className="home-page">
 
-  render() {
-    return (
-      <div className="home-page">
+      <Banner token={token} appName={appName} />
 
-        <Banner token={this.props.token} appName={this.props.appName} />
+      <div className="container page">
+        <div className="row">
+          <MainView />
 
-        <div className="container page">
-          <div className="row">
-            <MainView />
+          <div className="col-md-3">
+            <div className="sidebar">
 
-            <div className="col-md-3">
-              <div className="sidebar">
+              <p>Popular Tags</p>
 
-                <p>Popular Tags</p>
+              <Tags
+                tags={tags}
+                onClickTag={onClickTag} />
 
-                <Tags
-                  tags={this.props.tags}
-                  onClickTag={this.props.onClickTag} />
-
-              </div>
             </div>
           </div>
         </div>
-
       </div>
-    );
-  }
-}
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+    </div>
+  );
+};
+
+export default Home;
