@@ -47,7 +47,10 @@
     },
     {
       "stage": "validate",
-      "status": "pending"
+      "status": "passed",
+      "finishedAt": "2026-07-07T08:08:36.650Z",
+      "executor": "fable",
+      "notes": "all characterization tests pass on migrated code; no regressions; builds and serves cleanly"
     }
   ],
   "decisions": [
@@ -157,6 +160,14 @@
       "cwd": "runs/react-redux-realworld-example-app/characterization",
       "ok": true,
       "summary": "review pass: 157/157 both targets, build clean, no edits needed"
+    },
+    {
+      "ts": "2026-07-07T08:08:36.646Z",
+      "stage": "validate",
+      "command": "vitest both targets + vite build + monorepo suite",
+      "cwd": "runs/react-redux-realworld-example-app",
+      "ok": true,
+      "summary": "FINAL: original 157/157, migrated 157/157, build clean, monorepo 29/29"
     }
   ]
 }
