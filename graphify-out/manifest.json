@@ -1,0 +1,702 @@
+{
+  "agents/package.json": {
+    "mtime": 1783400242.163715,
+    "ast_hash": "4ac86895af706f7a7a2360fb3eff62f0",
+    "semantic_hash": ""
+  },
+  "agents/src/index.ts": {
+    "mtime": 1783400261.3638372,
+    "ast_hash": "f61f3562ca34360590795591f78e63be",
+    "semantic_hash": ""
+  },
+  "agents/test/definitions.test.ts": {
+    "mtime": 1783400348.5807865,
+    "ast_hash": "35e63abbcc0ee6e9dda1a42d067e2932",
+    "semantic_hash": ""
+  },
+  "agents/tsconfig.json": {
+    "mtime": 1783400243.6837666,
+    "ast_hash": "f620e95d9adef32844778a9418b7b22f",
+    "semantic_hash": ""
+  },
+  "cli/package.json": {
+    "mtime": 1783400267.9370053,
+    "ast_hash": "b125517c03d86618119917b98fe8d393",
+    "semantic_hash": ""
+  },
+  "cli/src/index.ts": {
+    "mtime": 1783400286.2931654,
+    "ast_hash": "7aaf800e2c370cd69a93c74b77037424",
+    "semantic_hash": ""
+  },
+  "cli/test/cli.test.ts": {
+    "mtime": 1783400356.9497018,
+    "ast_hash": "98f46b2efd62e0f6cc58f282a0cd5446",
+    "semantic_hash": ""
+  },
+  "cli/tsconfig.json": {
+    "mtime": 1783400269.323308,
+    "ast_hash": "c65c7622b9e30a3dc4db70341330b65e",
+    "semantic_hash": ""
+  },
+  "core/package.json": {
+    "mtime": 1783400155.4095583,
+    "ast_hash": "78318ece84df1d213bed5e035f01041a",
+    "semantic_hash": ""
+  },
+  "core/src/adapters.ts": {
+    "mtime": 1783400190.4449735,
+    "ast_hash": "df7e5e7ef62fa257e39e611be0e678e3",
+    "semantic_hash": ""
+  },
+  "core/src/eval.ts": {
+    "mtime": 1783400210.4371674,
+    "ast_hash": "17d5367fedaddd09a4296cd75098ad05",
+    "semantic_hash": ""
+  },
+  "core/src/index.ts": {
+    "mtime": 1783400236.2844825,
+    "ast_hash": "e5ba8e743f25c39d5dfada87803b8cb7",
+    "semantic_hash": ""
+  },
+  "core/src/pipeline.ts": {
+    "mtime": 1783400235.6054955,
+    "ast_hash": "ec981cde8cf3507d48ee4f5955853939",
+    "semantic_hash": ""
+  },
+  "core/src/router.ts": {
+    "mtime": 1783400170.837524,
+    "ast_hash": "f406c47ed6c42c8d17c53ef6a0cccd30",
+    "semantic_hash": ""
+  },
+  "core/src/state.ts": {
+    "mtime": 1783400203.0751925,
+    "ast_hash": "bf5f907da571a3b835bb01af9e0e3988",
+    "semantic_hash": ""
+  },
+  "core/src/task.ts": {
+    "mtime": 1783400160.5528114,
+    "ast_hash": "b2dfe503a1d4cb194f1f6314f1a97027",
+    "semantic_hash": ""
+  },
+  "core/test/eval.test.ts": {
+    "mtime": 1783400317.807919,
+    "ast_hash": "bf17c5be63302644c7fa8908fdc66c26",
+    "semantic_hash": ""
+  },
+  "core/test/pipeline.test.ts": {
+    "mtime": 1783400338.7485478,
+    "ast_hash": "874ea249ffd106c72eae0954acd30e91",
+    "semantic_hash": ""
+  },
+  "core/test/router.test.ts": {
+    "mtime": 1783400302.818518,
+    "ast_hash": "521d44e0adff12fdcaede9e49a5b1f1d",
+    "semantic_hash": ""
+  },
+  "core/test/state.test.ts": {
+    "mtime": 1783400312.6956797,
+    "ast_hash": "30ef94abe8aafaabdbb3e2cf067208ef",
+    "semantic_hash": ""
+  },
+  "core/tsconfig.json": {
+    "mtime": 1783400156.3393757,
+    "ast_hash": "ceb8c3038774caa219189f7ab0cbe4a3",
+    "semantic_hash": ""
+  },
+  "package.json": {
+    "mtime": 1783400138.1159606,
+    "ast_hash": "5356e08375a2201242a6addbcd43a972",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/package.json": {
+    "mtime": 1783400765.4420304,
+    "ast_hash": "07982d18b751d56a8f66c87dcb380c62",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/tests/agent.test.js": {
+    "mtime": 1783401359.234487,
+    "ast_hash": "6d266fca6579488b8d873497ae9a9e67",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/tests/flows/article.test.js": {
+    "mtime": 1783401494.3281386,
+    "ast_hash": "b761953277bf4de40aa3b8face38d565",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/tests/flows/auth.test.js": {
+    "mtime": 1783401409.2482002,
+    "ast_hash": "fe09e423f9367d358c23c7c2e5aa7694",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/tests/flows/editor.test.js": {
+    "mtime": 1783401654.9658988,
+    "ast_hash": "08cfb63230512790497d86d57dfd85db",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/tests/flows/feed.test.js": {
+    "mtime": 1783401560.6263301,
+    "ast_hash": "17c65d2d6e8753c5ad45df7d00e04981",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/tests/flows/home.test.js": {
+    "mtime": 1783400940.2555768,
+    "ast_hash": "4e078133a0c53fdbc6c806d9b4b699b7",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/tests/flows/profile.test.js": {
+    "mtime": 1783401604.9815116,
+    "ast_hash": "92c623e14422102918a5a7508099802a",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/tests/flows/settings.test.js": {
+    "mtime": 1783401669.3331773,
+    "ast_hash": "c8910ac1210acab6776c8a6104b97fec",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/tests/harness.smoke.test.js": {
+    "mtime": 1783400794.7000782,
+    "ast_hash": "2e4dccd60d3fcd77ac934a364c69e0d2",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/tests/helpers/fixtures.js": {
+    "mtime": 1783400914.0344071,
+    "ast_hash": "d360434eda9c2c4de95062adde9b3944",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/tests/helpers/renderApp.js": {
+    "mtime": 1783410354.8551562,
+    "ast_hash": "d87f78aa2b5edd0717d00a98a4469db6",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/tests/helpers/superagentMock.js": {
+    "mtime": 1783401330.9852827,
+    "ast_hash": "0c4219d387bff63c8105401391f8939c",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/tests/middleware.test.js": {
+    "mtime": 1783401316.3731217,
+    "ast_hash": "a73bd06ceb8a3366a9711b076e6c1ae8",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/tests/reducers/article.test.js": {
+    "mtime": 1783401215.1554387,
+    "ast_hash": "d0d80d5a7cf58aa93f9258adad91c4fa",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/tests/reducers/articleList.test.js": {
+    "mtime": 1783401231.4407432,
+    "ast_hash": "638c60d79ebf91d165ea42f5687c4af1",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/tests/reducers/auth.test.js": {
+    "mtime": 1783401241.9856505,
+    "ast_hash": "e3513ebbc7536c46960dbcbc4e306737",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/tests/reducers/common.test.js": {
+    "mtime": 1783401257.5921218,
+    "ast_hash": "9c8b370ec1926f64c92808f4fcc1eaee",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/tests/reducers/editor.test.js": {
+    "mtime": 1783401269.2867603,
+    "ast_hash": "f409b044f1d4b4ea49c7577e58c32322",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/tests/reducers/home.test.js": {
+    "mtime": 1783401274.2640939,
+    "ast_hash": "1483e83cbd12cc3fed8ea22d1ec2fbdc",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/tests/reducers/profile.test.js": {
+    "mtime": 1783401280.8878658,
+    "ast_hash": "4dfae8c527ec608f3abb292b5f98b33f",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/tests/reducers/settings.test.js": {
+    "mtime": 1783401287.4487782,
+    "ast_hash": "147877c23e2418ee643be7334492f07c",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/tests/setup.js": {
+    "mtime": 1783400995.4129798,
+    "ast_hash": "858ef06cd26261992f789b9151bd1bd6",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/characterization/vitest.config.mjs": {
+    "mtime": 1783400894.7643993,
+    "ast_hash": "f029782ec50aabfe310b7078c22f47f0",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/package.json": {
+    "mtime": 1783410435.1899428,
+    "ast_hash": "aaafadeea25448636f25d0ad30f2d417",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/agent.js": {
+    "mtime": 1783401854.9711144,
+    "ast_hash": "c7a4b6745c306e2065f37cab6f032ec8",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/App.jsx": {
+    "mtime": 1783411137.1260676,
+    "ast_hash": "b2a14974727259c11f1f20936c19b42e",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/Article/ArticleActions.jsx": {
+    "mtime": 1783410561.7898228,
+    "ast_hash": "f7121fffb2c7def2e5f7ec69974f3525",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/Article/ArticleMeta.jsx": {
+    "mtime": 1783401788.484526,
+    "ast_hash": "2fe7268bb139ac4cf7d820d7a2ab6208",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/Article/Comment.jsx": {
+    "mtime": 1783401788.4858732,
+    "ast_hash": "52cf8a3cfe5276a539efbc119080815f",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/Article/CommentContainer.jsx": {
+    "mtime": 1783401788.4840217,
+    "ast_hash": "1616548db7814dd5f65561c32a6dd393",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/Article/CommentInput.jsx": {
+    "mtime": 1783410612.0823104,
+    "ast_hash": "3174a2610014d69fb88fbda4543b51b6",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/Article/CommentList.jsx": {
+    "mtime": 1783401788.4863925,
+    "ast_hash": "3baaf9a980e88f0c3b1063f343691917",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/Article/DeleteButton.jsx": {
+    "mtime": 1783410564.4036126,
+    "ast_hash": "4c7fd660eaac9bc4f3dbf90545613af2",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/Article/index.jsx": {
+    "mtime": 1783411037.1419466,
+    "ast_hash": "f740f8b0ad124a38290bed7c005cc6e7",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/ArticleList.jsx": {
+    "mtime": 1783401788.4872572,
+    "ast_hash": "716a56d7823256b8942e192384812841",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/ArticlePreview.jsx": {
+    "mtime": 1783410546.7725565,
+    "ast_hash": "1439419bfc989ef45c6f6572f38da5c2",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/Editor.jsx": {
+    "mtime": 1783410719.0216882,
+    "ast_hash": "e97f432228612a2c0dc84da2389f7b71",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/Header.jsx": {
+    "mtime": 1783410533.3481867,
+    "ast_hash": "b5829d424473b5db1e6b8d15ce0201a7",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/Home/Banner.jsx": {
+    "mtime": 1783401788.4791617,
+    "ast_hash": "42fb762af6be73d501c9d2ea6bde46c4",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/Home/MainView.jsx": {
+    "mtime": 1783410558.4900742,
+    "ast_hash": "bd3a90e4e92303480502e0e472fd67ac",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/Home/Tags.jsx": {
+    "mtime": 1783401788.4781895,
+    "ast_hash": "3cab2d6743352f833efbb9a22a38ae02",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/Home/index.jsx": {
+    "mtime": 1783411030.3189373,
+    "ast_hash": "5eaa1a712e76feb12a2141cb014e4b87",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/ListErrors.jsx": {
+    "mtime": 1783410534.959827,
+    "ast_hash": "09b7120a80dba558315cbba7a62d8791",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/ListPagination.jsx": {
+    "mtime": 1783410550.94274,
+    "ast_hash": "47ff26ff3e4ad85cad39b739f34a3ef6",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/Login.jsx": {
+    "mtime": 1783410600.2139127,
+    "ast_hash": "1bfc6d4e4c0206dd56166c764f110573",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/Profile.jsx": {
+    "mtime": 1783411089.4744453,
+    "ast_hash": "acd8866dd44064e6d421e937f6a3018b",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/ProfileFavorites.jsx": {
+    "mtime": 1783411071.6098325,
+    "ast_hash": "6de1da1a99500c8557df1040824b3739",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/Register.jsx": {
+    "mtime": 1783410608.0302956,
+    "ast_hash": "1e7a7e58a6824ba5c56eddbb453b11d6",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/components/Settings.jsx": {
+    "mtime": 1783410969.4076118,
+    "ast_hash": "6e0c18edd379e586ce0a5a2788bedb15",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/constants/actionTypes.js": {
+    "mtime": 1783401788.4754746,
+    "ast_hash": "df323149a94f7928614dc6c36908afbd",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/index.jsx": {
+    "mtime": 1783401853.7282887,
+    "ast_hash": "6b3ca999ca0bfaaee5f126fd31a0b783",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/middleware.js": {
+    "mtime": 1783401788.4888947,
+    "ast_hash": "d3b725cf33a217c682398bf3e90306d8",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/reducer.js": {
+    "mtime": 1783401851.3462422,
+    "ast_hash": "ec3a06f72b4b40264ccfd0d7679ef043",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/reducers/article.js": {
+    "mtime": 1783401788.4913785,
+    "ast_hash": "5caf9af78f2851c7ea661862c9261038",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/reducers/articleList.js": {
+    "mtime": 1783401788.492123,
+    "ast_hash": "194b2b23257357749d69d84477a47d6a",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/reducers/auth.js": {
+    "mtime": 1783401788.4901104,
+    "ast_hash": "6cebe40dd233f63422cec8eed96f300a",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/reducers/common.js": {
+    "mtime": 1783401788.491756,
+    "ast_hash": "359d4d62be7b1a89758fa4e330da39d8",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/reducers/editor.js": {
+    "mtime": 1783401788.490962,
+    "ast_hash": "89fa1a0e3f94b6ee1c69ae8c6b548f53",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/reducers/home.js": {
+    "mtime": 1783401788.4905512,
+    "ast_hash": "35c660f74fa62838a7a2e69bdddbce9c",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/reducers/profile.js": {
+    "mtime": 1783401788.4897149,
+    "ast_hash": "4b86b6234d79146131d9f63efe15b6de",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/reducers/settings.js": {
+    "mtime": 1783401788.4925144,
+    "ast_hash": "eb92dc1242fab1b0930bbc4a55d623aa",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/src/store.js": {
+    "mtime": 1783401849.438021,
+    "ast_hash": "2a9e946b934a3569d02604c5f3a29da3",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/vite.config.js": {
+    "mtime": 1783401803.9760473,
+    "ast_hash": "aa22d7924d343aff7125786e3785aa3f",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/package.json": {
+    "mtime": 1783400046.5933843,
+    "ast_hash": "1180719bc7faea83646bfb747c28c4f9",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/agent.js": {
+    "mtime": 1783400046.5943894,
+    "ast_hash": "509b70be8baf40bd07b5551ac189a55e",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/App.js": {
+    "mtime": 1783400046.5946505,
+    "ast_hash": "1bb9da5ee26f1a0231769a9db77c5924",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/Article/ArticleActions.js": {
+    "mtime": 1783400046.594824,
+    "ast_hash": "5b8476105069cfddaf83ea7ae70f4e3e",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/Article/ArticleMeta.js": {
+    "mtime": 1783400046.594931,
+    "ast_hash": "2fe7268bb139ac4cf7d820d7a2ab6208",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/Article/Comment.js": {
+    "mtime": 1783400046.5950356,
+    "ast_hash": "52cf8a3cfe5276a539efbc119080815f",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/Article/CommentContainer.js": {
+    "mtime": 1783400046.5951567,
+    "ast_hash": "1616548db7814dd5f65561c32a6dd393",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/Article/CommentInput.js": {
+    "mtime": 1783400046.5952654,
+    "ast_hash": "e8570f7bbc2c873a2d008bab4c157728",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/Article/CommentList.js": {
+    "mtime": 1783400046.5953782,
+    "ast_hash": "3baaf9a980e88f0c3b1063f343691917",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/Article/DeleteButton.js": {
+    "mtime": 1783400046.5954938,
+    "ast_hash": "46594e71222e1af4db7624bda6100c19",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/Article/index.js": {
+    "mtime": 1783400046.595609,
+    "ast_hash": "aee7d5db7fccf7508d2d8d3fda8c7144",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/ArticleList.js": {
+    "mtime": 1783400046.5957227,
+    "ast_hash": "716a56d7823256b8942e192384812841",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/ArticlePreview.js": {
+    "mtime": 1783400046.595848,
+    "ast_hash": "a64c675a30e0cb642aac18e9d25d6926",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/Editor.js": {
+    "mtime": 1783400046.595992,
+    "ast_hash": "fdddcdca0446cc49a88ad1ca74ba7867",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/Header.js": {
+    "mtime": 1783400046.5961125,
+    "ast_hash": "c3d8e4325ce847d49f5cf073e44807bf",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/Home/Banner.js": {
+    "mtime": 1783400046.5962844,
+    "ast_hash": "42fb762af6be73d501c9d2ea6bde46c4",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/Home/MainView.js": {
+    "mtime": 1783400046.5964072,
+    "ast_hash": "295c4b4f8eb57d38907c0d970ddb7d06",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/Home/Tags.js": {
+    "mtime": 1783400046.5965023,
+    "ast_hash": "3cab2d6743352f833efbb9a22a38ae02",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/Home/index.js": {
+    "mtime": 1783400046.596602,
+    "ast_hash": "51c8937adcb9e23b02a58d470cdd0552",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/ListErrors.js": {
+    "mtime": 1783400046.596717,
+    "ast_hash": "5e215c98aea9bc6f8e5026e2f5ad92bd",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/ListPagination.js": {
+    "mtime": 1783400046.596836,
+    "ast_hash": "d087ab7108e1a1036a172cbed41b06e0",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/Login.js": {
+    "mtime": 1783400046.5969484,
+    "ast_hash": "d5286b9997b5f8c1dd518536a791ddeb",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/Profile.js": {
+    "mtime": 1783400046.5970774,
+    "ast_hash": "1a093fbdb710e692bcfd50fba09bf2b8",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/ProfileFavorites.js": {
+    "mtime": 1783400046.5972009,
+    "ast_hash": "4fea566ec2bc59cb0844a27823a80865",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/Register.js": {
+    "mtime": 1783400046.5973337,
+    "ast_hash": "49ed599ea7fd31d119157eca80939c20",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/components/Settings.js": {
+    "mtime": 1783400046.597449,
+    "ast_hash": "f21647e984f5faaccf0259419829e3bc",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/constants/actionTypes.js": {
+    "mtime": 1783400046.5976076,
+    "ast_hash": "df323149a94f7928614dc6c36908afbd",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/index.js": {
+    "mtime": 1783400046.5977051,
+    "ast_hash": "6f05926a45389fd6bb116d7aa3562fd6",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/middleware.js": {
+    "mtime": 1783400046.5978029,
+    "ast_hash": "d3b725cf33a217c682398bf3e90306d8",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/reducer.js": {
+    "mtime": 1783400046.5979064,
+    "ast_hash": "402b6a871ad337f452691903aec713f7",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/reducers/article.js": {
+    "mtime": 1783400046.5980794,
+    "ast_hash": "5caf9af78f2851c7ea661862c9261038",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/reducers/articleList.js": {
+    "mtime": 1783400046.598195,
+    "ast_hash": "194b2b23257357749d69d84477a47d6a",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/reducers/auth.js": {
+    "mtime": 1783400046.5982969,
+    "ast_hash": "6cebe40dd233f63422cec8eed96f300a",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/reducers/common.js": {
+    "mtime": 1783400046.5983994,
+    "ast_hash": "359d4d62be7b1a89758fa4e330da39d8",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/reducers/editor.js": {
+    "mtime": 1783400046.5985055,
+    "ast_hash": "89fa1a0e3f94b6ee1c69ae8c6b548f53",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/reducers/home.js": {
+    "mtime": 1783400046.5986285,
+    "ast_hash": "35c660f74fa62838a7a2e69bdddbce9c",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/reducers/profile.js": {
+    "mtime": 1783400046.5987344,
+    "ast_hash": "4b86b6234d79146131d9f63efe15b6de",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/reducers/settings.js": {
+    "mtime": 1783400046.5988417,
+    "ast_hash": "eb92dc1242fab1b0930bbc4a55d623aa",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/src/store.js": {
+    "mtime": 1783400046.598948,
+    "ast_hash": "c8c8959db13532d0105cc5378e3a85ed",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/run-state.json": {
+    "mtime": 1783411465.3654797,
+    "ast_hash": "4cb6cf86bac43fce6052f7d6a429798f",
+    "semantic_hash": ""
+  },
+  "tsconfig.base.json": {
+    "mtime": 1783400139.9490447,
+    "ast_hash": "a07c0c38bb19ad1da72360ff67515fa2",
+    "semantic_hash": ""
+  },
+  "vitest.config.ts": {
+    "mtime": 1783400293.8677378,
+    "ast_hash": "b7c45c60c2db0f0c168253a47102b737",
+    "semantic_hash": ""
+  },
+  "CLAUDE.md": {
+    "mtime": 1783400149.5246904,
+    "ast_hash": "199ddc41146d4650cf68889f378e5671",
+    "semantic_hash": ""
+  },
+  "core/config/routing.yaml": {
+    "mtime": 1783400174.260291,
+    "ast_hash": "70369116a003990b8af04559274ee04d",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/LICENSE.md": {
+    "mtime": 1783401788.4978275,
+    "ast_hash": "1926a7ff6dadc4a30fc87cc57f7f2ff2",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migrated/index.html": {
+    "mtime": 1783401807.7596064,
+    "ast_hash": "a834413ecfce3d41aa09fea66be3dbe3",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migration-log.md": {
+    "mtime": 1783411214.8977146,
+    "ast_hash": "e564b53ab44717366aa650af1c7bb986",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/migration-plan.md": {
+    "mtime": 1783400685.3194394,
+    "ast_hash": "ae977e66716891a3a3ab24d7d80ff76e",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/LICENSE.md": {
+    "mtime": 1783400046.5930817,
+    "ast_hash": "1926a7ff6dadc4a30fc87cc57f7f2ff2",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/README.md": {
+    "mtime": 1783400046.5932689,
+    "ast_hash": "5a930ffde99a6c955c6fe93c62e0df61",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/public/index.html": {
+    "mtime": 1783400046.5942113,
+    "ast_hash": "263f8efa65f87470f67fd354b135f374",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/review-report.md": {
+    "mtime": 1783411442.8289227,
+    "ast_hash": "dc550828c227bbe917395998514e377a",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/target-rationale.md": {
+    "mtime": 1783400440.239623,
+    "ast_hash": "720bedc1f2525b336ee40681fa1c04d7",
+    "semantic_hash": ""
+  },
+  "runs/react-redux-realworld-example-app/original/project-logo.png": {
+    "mtime": 1783400046.5937612,
+    "ast_hash": "8cbe505bd657b9cc9d1a42a5135ffd17",
+    "semantic_hash": ""
+  }
+}

@@ -40,7 +40,10 @@
     },
     {
       "stage": "document",
-      "status": "pending"
+      "status": "passed",
+      "finishedAt": "2026-07-07T08:07:34.219Z",
+      "executor": "haiku",
+      "notes": "README.md (EN technical) + one-pager.md (KR client-facing); factual corrections applied by pipeline lead"
     },
     {
       "stage": "validate",
@@ -107,6 +110,11 @@
       "ts": "2026-07-07T07:56:46.724Z",
       "stage": "migrate",
       "rationale": "M4: controlled-input eager ev.target.value capture — lazy read inside setState updater loses keystrokes (caught by settings flow test)"
+    },
+    {
+      "ts": "2026-07-07T08:07:34.222Z",
+      "stage": "document",
+      "rationale": "Corrected doc-writer overclaims: app age 2018-era not 10yrs, bundle-size baseline was M0 Vite build not CRA, softened perf/security claims"
     }
   ],
   "testGates": [
