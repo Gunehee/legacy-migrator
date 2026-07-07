@@ -5,13 +5,13 @@
     "semantic_hash": ""
   },
   "agents/src/index.ts": {
-    "mtime": 1783400261.3638372,
-    "ast_hash": "f61f3562ca34360590795591f78e63be",
+    "mtime": 1783438438.7588277,
+    "ast_hash": "b77327b341b2a42b5bd0d8a303b33d9b",
     "semantic_hash": ""
   },
   "agents/test/definitions.test.ts": {
-    "mtime": 1783400348.5807865,
-    "ast_hash": "35e63abbcc0ee6e9dda1a42d067e2932",
+    "mtime": 1783438454.0059,
+    "ast_hash": "ed28e615cfd365e1e59f1325af5bdce7",
     "semantic_hash": ""
   },
   "agents/tsconfig.json": {
@@ -60,8 +60,8 @@
     "semantic_hash": ""
   },
   "core/src/pipeline.ts": {
-    "mtime": 1783425339.9594054,
-    "ast_hash": "bb961098f191b8079a5ec0087c52b141",
+    "mtime": 1783438408.8724136,
+    "ast_hash": "629044a65f2b263ea2a4e893ef14b684",
     "semantic_hash": ""
   },
   "core/src/router.ts": {
@@ -70,8 +70,8 @@
     "semantic_hash": ""
   },
   "core/src/state.ts": {
-    "mtime": 1783425331.3472183,
-    "ast_hash": "1f870c87bccae7c510dfef95afde0df3",
+    "mtime": 1783438418.8646197,
+    "ast_hash": "f498984f50ecc9f86a52e7421c61694b",
     "semantic_hash": ""
   },
   "core/src/task.ts": {
@@ -85,8 +85,8 @@
     "semantic_hash": ""
   },
   "core/test/pipeline.test.ts": {
-    "mtime": 1783425432.945219,
-    "ast_hash": "d219c081e9e1e70ddf070deab63c71c2",
+    "mtime": 1783438492.7499213,
+    "ast_hash": "07e7a7c0d1c74d5d2b9df8d8798301f3",
     "semantic_hash": ""
   },
   "core/test/router.test.ts": {
@@ -710,98 +710,98 @@
     "semantic_hash": ""
   },
   "runs/legacy-migrator-fixture-test/characterization/package.json": {
-    "mtime": 1783418704.2719097,
+    "mtime": 1783442500.789952,
     "ast_hash": "680b6b96dede7cbcf6ccfcfae95e771d",
     "semantic_hash": ""
   },
   "runs/legacy-migrator-fixture-test/characterization/tests/Counter.test.js": {
-    "mtime": 1783418745.9735446,
-    "ast_hash": "2918b7cd1a4ec6cd256d90f64d61512f",
+    "mtime": 1783442928.5795488,
+    "ast_hash": "86ce8df897eb371357f37122c8039253",
     "semantic_hash": ""
   },
   "runs/legacy-migrator-fixture-test/characterization/tests/TodoList.test.js": {
-    "mtime": 1783418756.273652,
-    "ast_hash": "0594d3153f48af4c8b07280c88b5ab73",
+    "mtime": 1783442550.350886,
+    "ast_hash": "c6412122254b1de906bc371389e6c8cc",
     "semantic_hash": ""
   },
   "runs/legacy-migrator-fixture-test/characterization/tests/helpers/freshApp.js": {
-    "mtime": 1783418725.1928446,
-    "ast_hash": "ba41bd0b79e081207daa0da4ac8fee42",
+    "mtime": 1783442519.0700102,
+    "ast_hash": "b553371461a4368263ef9cc12b5a9f60",
     "semantic_hash": ""
   },
   "runs/legacy-migrator-fixture-test/characterization/tests/setup.js": {
-    "mtime": 1783418717.916159,
-    "ast_hash": "858f4edef1a50bdfda22655983623619",
+    "mtime": 1783442514.4130814,
+    "ast_hash": "5efccfcf203742b432a16e663a20a8a1",
     "semantic_hash": ""
   },
   "runs/legacy-migrator-fixture-test/characterization/tests/store.test.js": {
-    "mtime": 1783418737.759845,
-    "ast_hash": "3706ccbe03780b9bc092ab61a1fcb720",
+    "mtime": 1783442531.3968492,
+    "ast_hash": "a6b36f4389e06ebd5cf0465896c96f92",
     "semantic_hash": ""
   },
   "runs/legacy-migrator-fixture-test/characterization/tests/wiring.test.js": {
-    "mtime": 1783418761.943577,
-    "ast_hash": "4cf326666b0a43571580ea830f16fbd4",
+    "mtime": 1783442579.5923889,
+    "ast_hash": "b1288cd9adf01a8fe4b470c5c41e6896",
     "semantic_hash": ""
   },
   "runs/legacy-migrator-fixture-test/characterization/vitest.config.mjs": {
-    "mtime": 1783419231.391885,
-    "ast_hash": "6b2b33a7d93eb9d013f0ab5304207408",
+    "mtime": 1783442511.8840098,
+    "ast_hash": "80aad8031ad05de8015159e064b9a604",
     "semantic_hash": ""
   },
   "runs/legacy-migrator-fixture-test/migrated/package.json": {
-    "mtime": 1783437650.9473755,
-    "ast_hash": "078b97295b5103057aba83fe9bc33398",
+    "mtime": 1783442844.037777,
+    "ast_hash": "a1f30eb0e932c7e45cb50670e169adfd",
     "semantic_hash": ""
   },
   "runs/legacy-migrator-fixture-test/migrated/src/Counter.js": {
-    "mtime": 1783437705.9521642,
-    "ast_hash": "c6f2a459688735610268c86e98cf068c",
+    "mtime": 1783442871.066497,
+    "ast_hash": "2e5772d64b88b867929b89592241a7dc",
     "semantic_hash": ""
   },
   "runs/legacy-migrator-fixture-test/migrated/src/TodoList.js": {
-    "mtime": 1783437729.215382,
-    "ast_hash": "2d8740dd276d11f7a866dba9b016f666",
+    "mtime": 1783442888.9797513,
+    "ast_hash": "67fbfb54e7c21d1b7059db168240fbfd",
     "semantic_hash": ""
   },
   "runs/legacy-migrator-fixture-test/migrated/src/store.js": {
-    "mtime": 1783418472.0,
-    "ast_hash": "297eb3f635bd5618babc5be8504c49af",
+    "mtime": 1783442848.7878075,
+    "ast_hash": "3cf80da917514b8756d7afb3812ca0c9",
     "semantic_hash": ""
   },
   "runs/legacy-migrator-fixture-test/original/package.json": {
-    "mtime": 1783418472.616256,
+    "mtime": 1783442292.4354947,
     "ast_hash": "58d2fe769c8b688f2d8af19a330cd9c9",
     "semantic_hash": ""
   },
   "runs/legacy-migrator-fixture-test/original/src/Counter.js": {
-    "mtime": 1783418472.6164353,
+    "mtime": 1783442292.435681,
     "ast_hash": "9847e934f4dd9ab42ed1dc2dc0baf239",
     "semantic_hash": ""
   },
   "runs/legacy-migrator-fixture-test/original/src/TodoList.js": {
-    "mtime": 1783418472.616548,
+    "mtime": 1783442292.4358158,
     "ast_hash": "c9e05111b22f795bd8fcf3ce41c889e9",
     "semantic_hash": ""
   },
   "runs/legacy-migrator-fixture-test/original/src/store.js": {
-    "mtime": 1783418472.6166644,
+    "mtime": 1783442292.4359295,
     "ast_hash": "297eb3f635bd5618babc5be8504c49af",
     "semantic_hash": ""
   },
   "runs/legacy-migrator-fixture-test/run-state.json": {
-    "mtime": 1783437808.8088734,
-    "ast_hash": "95ccd9f9e60fabd121927a5d8e6f5c89",
+    "mtime": 1783443019.7225044,
+    "ast_hash": "b6fc84a2d4c93efe6677e416cc330cd0",
     "semantic_hash": ""
   },
   "runs/legacy-migrator-fixture-test/migration-log.md": {
-    "mtime": 1783437792.4935255,
-    "ast_hash": "df25ede1b95bc801450c3f6eb370fbe4",
+    "mtime": 1783443047.0807116,
+    "ast_hash": "6d5624a2e7c6009b45162561bb29d792",
     "semantic_hash": ""
   },
   "runs/legacy-migrator-fixture-test/migration-plan.md": {
-    "mtime": 1783418577.6901705,
-    "ast_hash": "4164d85028830fa45d3efaefa01b0062",
+    "mtime": 1783442371.0595877,
+    "ast_hash": "b61544801e3923c26896100231560e2c",
     "semantic_hash": ""
   },
   "runs/react-redux-realworld-example-app/README.md": {

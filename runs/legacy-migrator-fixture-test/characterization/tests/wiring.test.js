@@ -1,28 +1,29 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { freshApp } from './helpers/freshApp';
 
-/**
- * R4: nothing in the repo mounts a <Provider> — no entry point exists.
- * Both connected components must fail to render without one. Assert only
- * that it throws, not the message text: react-redux 5 (connect) and the
- * hooks-based migration target raise different error messages for the
- * same missing-store condition.
- */
-describe('wiring: connected components require a <Provider>', () => {
-  it('rendering Counter without a Provider throws', async () => {
-    vi.resetModules();
-    const { default: Counter } = await import('@app/Counter');
-    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    expect(() => render(React.createElement(Counter))).toThrow();
-    errorSpy.mockRestore();
-  });
+describe('wiring: Counter and TodoList share one store via combineReducers', () => {
+  it('adding todos does not affect the count, and incrementing does not affect todos', async () => {
+    const { store, Provider, Counter, TodoList } = await freshApp();
+    render(
+      React.createElement(
+        Provider,
+        { store },
+        // react-redux v5's <Provider> requires a single child (React.Children.only).
+        React.createElement(React.Fragment, null, React.createElement(Counter), React.createElement(TodoList)),
+      ),
+    );
 
-  it('rendering TodoList without a Provider throws', async () => {
-    vi.resetModules();
-    const { default: TodoList } = await import('@app/TodoList');
-    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    expect(() => render(React.createElement(TodoList))).toThrow();
-    errorSpy.mockRestore();
+    fireEvent.click(screen.getByText('+'));
+    fireEvent.click(screen.getByText('+'));
+    expect(store.getState().counter).toBe(2);
+    expect(store.getState().todos).toEqual([]);
+
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'independent' } });
+    fireEvent.click(screen.getByText('Add'));
+    expect(store.getState().todos).toEqual(['independent']);
+    expect(store.getState().counter).toBe(2);
+    expect(screen.getByText('2')).toBeInTheDocument();
   });
 });

@@ -12,20 +12,26 @@ function renderTodoList({ store, Provider, TodoList }) {
 }
 
 describe('TodoList (connected)', () => {
-  it('renders an empty list initially', async () => {
+  it('renders div.todo-list with an empty controlled input, an "Add" button, and an empty <ul>', async () => {
     const app = await freshApp();
-    renderTodoList(app);
+    const { container } = render(
+      React.createElement(app.Provider, { store: app.store }, React.createElement(app.TodoList)),
+    );
+    expect(container.querySelector('div.todo-list')).not.toBeNull();
+    expect(screen.getByRole('textbox').value).toBe('');
+    expect(screen.getByText('Add')).toBeInTheDocument();
     expect(screen.queryAllByRole('listitem')).toHaveLength(0);
   });
 
-  it('input is controlled: typing updates the field value', async () => {
+  it('input is controlled: typing updates the field value (wiring, no dispatch yet)', async () => {
     const app = await freshApp();
     const { input } = renderTodoList(app);
     fireEvent.change(input, { target: { value: 'buy milk' } });
     expect(input.value).toBe('buy milk');
+    expect(app.store.getState().todos).toEqual([]);
   });
 
-  it('submitting non-empty text adds the todo, clears the input, and updates the store', async () => {
+  it('submitting non-empty text appends an <li>, clears the input, and updates the store', async () => {
     const app = await freshApp();
     const { input, submit } = renderTodoList(app);
     fireEvent.change(input, { target: { value: 'buy milk' } });
@@ -35,7 +41,7 @@ describe('TodoList (connected)', () => {
     expect(app.store.getState().todos).toEqual(['buy milk']);
   });
 
-  it('R2: submitting with empty input dispatches nothing and renders no empty <li>', async () => {
+  it('submitting with empty input does nothing: no <li>, no dispatch', async () => {
     const app = await freshApp();
     const { submit } = renderTodoList(app);
     submit();
@@ -43,7 +49,7 @@ describe('TodoList (connected)', () => {
     expect(screen.queryAllByRole('listitem')).toHaveLength(0);
   });
 
-  it('R2: submitting whitespace-only text IS added (guard checks truthiness only, no trim)', async () => {
+  it('submitting "   " (whitespace-only) DOES add a todo — pins the no-trim guard verbatim', async () => {
     const app = await freshApp();
     const { input, submit } = renderTodoList(app);
     fireEvent.change(input, { target: { value: '   ' } });
@@ -52,7 +58,7 @@ describe('TodoList (connected)', () => {
     expect(input.value).toBe('');
   });
 
-  it('R2: submitting the string "0" is added (falsy-string edge of the guard)', async () => {
+  it('submitting the string "0" is added — falsy-string edge of the same guard', async () => {
     const app = await freshApp();
     const { input, submit } = renderTodoList(app);
     fireEvent.change(input, { target: { value: '0' } });
@@ -60,7 +66,7 @@ describe('TodoList (connected)', () => {
     expect(app.store.getState().todos).toEqual(['0']);
   });
 
-  it('duplicate todos are allowed and rendered in append order', async () => {
+  it('multiple adds preserve list order, including duplicate texts as separate items', async () => {
     const app = await freshApp();
     const { input, submit } = renderTodoList(app);
     for (const text of ['a', 'a', 'b']) {
@@ -68,11 +74,11 @@ describe('TodoList (connected)', () => {
       submit();
     }
     expect(app.store.getState().todos).toEqual(['a', 'a', 'b']);
-    const items = screen.getAllByRole('listitem').map(li => li.textContent);
+    const items = screen.getAllByRole('listitem').map((li) => li.textContent);
     expect(items).toEqual(['a', 'a', 'b']);
   });
 
-  it('rendered <li> count matches store todos length', async () => {
+  it('rendered <li> count always matches the store todos length', async () => {
     const app = await freshApp();
     const { input, submit } = renderTodoList(app);
     for (const text of ['x', 'y', 'z']) {

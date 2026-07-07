@@ -1,12 +1,9 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { createStore, combineReducers } from 'redux';
 
 const INCREMENT = 'INCREMENT';
 const DECREMENT = 'DECREMENT';
 const ADD_TODO = 'ADD_TODO';
 
-// Action shapes are public API (raw dispatch consumers): keep the legacy type
-// strings and the top-level `text` field — RTK's createAction can only carry
-// data under `payload`, so these stay hand-written.
 export const increment = () => ({ type: INCREMENT });
 export const decrement = () => ({ type: DECREMENT });
 export const addTodo = text => ({ type: ADD_TODO, text });
@@ -31,9 +28,6 @@ const todos = (state = [], action) => {
   }
 };
 
-export const store = configureStore({
-  reducer: { counter, todos },
-  // The legacy store had no middleware: dispatch accepted plain objects only.
-  // Disable RTK's default thunk so dispatching a function still throws.
-  middleware: getDefaultMiddleware => getDefaultMiddleware({ thunk: false }),
-});
+const reducer = combineReducers({ counter, todos });
+
+export const store = createStore(reducer);

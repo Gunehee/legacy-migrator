@@ -3,16 +3,10 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
 
-/**
- * Dual-target golden-master config.
- *
- * TARGET=original (default): '@app' → ../original/src, libraries resolve from
- * this package's node_modules (installed at the ORIGINAL's declared versions).
- *
- * TARGET=migrated: '@app' → ../migrated/src, and every runtime library the app
- * touches is pinned to ../migrated/node_modules so the suite exercises the
- * migrated code with the migrated dependency set — same tests, new stack.
- */
+// Dual-target golden-master config: the SAME suite runs against original/
+// (TARGET=original, default — this is the gate before migration starts) and
+// migrated/ (TARGET=migrated — the gate the migrator/reviewer stages run
+// later). '@app' resolves to whichever tree is under test.
 const HERE = dirname(fileURLToPath(new URL(import.meta.url)));
 const TARGET = process.env.TARGET ?? 'original';
 if (!['original', 'migrated'].includes(TARGET)) {
@@ -25,16 +19,19 @@ if (!existsSync(appSrc)) {
 
 const alias = { '@app': appSrc };
 
-// Pin every runtime library to the *target's* dependency set. original/ has no
-// node_modules (it is an immutable snapshot), so its declared versions live in
-// this package's node_modules; migrated/ brings its own modern versions.
+// original/ ships no node_modules (it's an immutable snapshot) so its declared
+// versions are installed here instead; migrated/ carries its own dependency
+// set once it exists, so pin every runtime lib the app touches to whichever
+// tree is under test.
 const depRoot =
   TARGET === 'migrated' ? join(HERE, '..', 'migrated', 'node_modules') : join(HERE, 'node_modules');
 for (const pkg of ['react', 'react-dom', 'react-redux', 'redux', '@testing-library/react', '@testing-library/dom']) {
   if (existsSync(join(depRoot, pkg))) alias[pkg] = join(depRoot, pkg);
 }
 
-/** The app keeps JSX in .js files (faithful to upstream); transform them explicitly. */
+// The fixture keeps JSX in .js files with no build tooling of its own;
+// transform it explicitly rather than requiring original/migrated to ship a
+// babel/webpack config that isn't part of their observable behavior.
 const jsxInJs = {
   name: 'jsx-in-js',
   enforce: 'pre',
@@ -52,16 +49,11 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./tests/setup.js'],
     include: ['tests/**/*.test.{js,jsx}'],
-    // the app relies on a module-scoped store singleton; isolate per file
+    // store.js holds a module-scoped singleton; isolate per test file so
+    // suites can't leak counter/todos state into one another.
     isolate: true,
     server: {
       deps: {
-        // Vite processes these so top-level aliases apply where possible. NOTE:
-        // aliases can never rewrite CJS require() chains (e.g. RTL → react-dom),
-        // so single-React-instance per target is guaranteed by Node sibling
-        // resolution instead: the migrated target installs @testing-library/*
-        // as devDependencies in migrated/, making every require('react')
-        // resolve inside migrated/node_modules.
         inline: [/react-redux/, /@testing-library/],
       },
     },

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addTodo } from './store';
 
-const TodoList = () => {
+export default function TodoList() {
   const [text, setText] = useState('');
   const todos = useSelector(state => state.todos);
   const dispatch = useDispatch();
@@ -13,11 +13,12 @@ const TodoList = () => {
 
   const handleSubmit = ev => {
     ev.preventDefault();
-    // Deliberately NOT trimmed: only '' is blocked; whitespace-only and "0" submit
-    // (pinned by characterization tests — preserve exactly).
+    // Deliberately no .trim(): the legacy guard blocks only the empty string,
+    // so whitespace-only todos are added (pinned by characterization tests).
     if (!text) {
       return;
     }
+    // Keep the legacy order: dispatch first, then clear the input.
     dispatch(addTodo(text));
     setText('');
   };
@@ -35,6 +36,4 @@ const TodoList = () => {
       </ul>
     </div>
   );
-};
-
-export default TodoList;
+}

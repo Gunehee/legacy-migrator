@@ -1,116 +1,121 @@
 # Migration log — legacy-migrator-fixture-test
 
-## Analyze stage (2026-07-07)
+## Testgen stage (2026-07-08)
 
-- **[flag / ambiguity] TodoList empty-input guard** (`original/src/TodoList.js:19`):
-  `if (!this.state.text) return;` blocks only `''`. Whitespace-only and `"0"` submissions
-  go through. Resolution per governance rule 2: preserve exactly — do NOT add `.trim()`.
-  Characterization tests pin the whitespace-submits case.
-- **[flag / decision-for-migrator] store.js exports only the built singleton** — the combined
-  `reducer` is module-private, which prevents fresh-store-per-test isolation. Options:
-  (a) tests reconstruct state via the singleton with ordering discipline, or (b) migrator adds
-  an additive `export const reducer` (no observable behavior change, but an API-surface
-  addition — must be rationale-logged if taken).
-- **[rationale] Redux stays at hand-rolled reducers, upgrade `redux@3→^4` only, no Redux
-  Toolkit**: RTK rewrites reducer code and is outside the class-react-to-hooks lane;
-  redux@4 is behavior-identical for the APIs used.
-- **[rationale] `react-redux@5→^8`, React stays `^16.14`**: hooks API requires
-  react-redux ≥7.1; React 16.14 already supports hooks, so no React upgrade needed.
-  Dep upgrade lands as its own step (connect API unchanged) before any component rewrite.
-- **[rationale] `key={i}` index keys in TodoList kept as-is**: list is append-only; changing
-  key derivation alters reconciliation behavior and is outside the migration's scope.
+- **[rationale] Store isolation solved via test technique, not a source change**:
+  `store.js` exports only the built `store` singleton, never the underlying reducer, so
+  naive tests sharing one import would leak counter/todos state across cases (risk area
+  1 in migration-plan.md). Chose `vi.resetModules()` + dynamic `import('@app/store')`
+  per test (see `tests/helpers/freshApp.js`) over adding an exported reducer — zero edits
+  to `original/`, and no new API surface for the migration to carry forward. Satisfies
+  governance rule 4 (originals immutable) and rule 2 (no incidental API-surface changes).
+- **[rationale] Dual-target harness (`characterization/` as its own package)**: a
+  `vitest.config.mjs` resolves an `@app` alias to `../original/src` or `../migrated/src`
+  based on a `TARGET` env var, and pins every runtime dependency (`react`, `react-dom`,
+  `react-redux`, `redux`, testing-library packages) to the target's own `node_modules` so
+  no two React copies end up in one test run. This lets the identical 27-test suite gate
+  both `original/` now and `migrated/` once step 6 of the migration sequence needs it —
+  `npm test` (default `TARGET=original`) is the testgen gate; `npm run test:migrated` is
+  recorded as the pipeline's validationCommand for later stages.
+- **[rationale] JSX handled via an esbuild transform plugin, not a babel config file**:
+  the fixture ships no build tooling and `.js` files containing JSX (faithful to
+  upstream) need a transform to run under Node/jsdom. Adding a plugin inside
+  `vitest.config.mjs` avoids introducing a `.babelrc` or similar file that would look
+  like part of the app's own build setup.
+- **[flag / pinned via test] TodoList empty-input guard** (`original/src/TodoList.js:19`):
+  `if (!this.state.text) return;` blocks only the empty string. Whitespace-only (`'   '`)
+  and the literal string `'0'` both pass the guard and ARE added as todos. Per governance
+  rule 2 this is preserved exactly — `tests/TodoList.test.js` pins both edge cases so a
+  migration that "fixes" this with `.trim()` or a truthiness rewrite fails the gate.
+- **[flag / pinned via test] `key={i}` index keys** (`original/src/TodoList.js:35`): kept
+  as observable-behavior-neutral for an append-only list; not something a characterization
+  test can assert on directly (keys aren't part of rendered output), so this is noted here
+  rather than pinned by an assertion.
+- **[result] `characterization/` created — 4 files, 27 tests, all green against
+  `original/`**: `store.test.js` (13 — action creators, counter slice, todos slice,
+  immutability, cross-slice independence), `Counter.test.js` (5 — initial render, +/-
+  dispatch, accumulation, external `store.dispatch` wiring), `TodoList.test.js` (8 —
+  controlled input, submit/clear/store-update, empty/whitespace/`"0"` guard edges,
+  duplicates, li-count parity), `wiring.test.js` (1 — Counter and TodoList mounted under
+  one store stay isolated via `combineReducers`). No file under `original/` was modified;
+  reproduction command is `npm test` from `characterization/` (`TARGET=original` is the
+  default).
 
-## Testgen stage (2026-07-07)
+## Migrate stage (2026-07-08, lane: class-react-to-hooks)
 
-- **[rationale] R1 resolved via test technique, not a source change**: `store.js` exports
-  only the built `store` singleton, not the reducer, so naive tests would leak state across
-  cases (option a/b in the analyzer's flag). Chose neither destructive option — tests call
-  `vi.resetModules()` + dynamic `import('@app/store')` per test, forcing a fresh singleton
-  each time with zero edits to `original/` or `migrated/`. `Counter.js`/`TodoList.js` import
-  `./store` by relative path, which resolves to the same module instance post-reset, so
-  rendered components and assertions share one fresh store per test. Governance rule 4
-  (originals immutable) and rule 2 (no incidental API-surface changes) are both satisfied.
-- **[rationale] Toolchain mirrors the prior `react-redux-realworld-example-app` run**:
-  `characterization/` is its own package with a dual-target `vitest.config.mjs`
-  (`TARGET=original|migrated` selects `../original/src` or `../migrated/src` via an `@app`
-  alias, and pins runtime deps to the target's own `node_modules`). Same 30 tests will run
-  unchanged against `migrated/` once it exists, per plan §4 step 6's completion gate.
-- **[result] characterization/ — 4 files / 30 tests, all green against `original/`**:
-  `store.test.js` (15: action creators, counter slice, todos slice, immutability, cross-slice
-  independence), `Counter.test.js` (5: initial render, +/- dispatch, accumulation),
-  `TodoList.test.js` (8: controlled input, submit/clear/store-update, R2 empty/whitespace/`"0"`
-  guard edges, duplicates, li-count parity), `wiring.test.js` (2: R4 — render without
-  `<Provider>` throws for both components, message text intentionally not asserted). No
-  `original/` source was modified; `npm test` run from `characterization/` with
-  `TARGET=original` (default) is the reproduction command.
+Executed plan §4 into `migrated/` — `original/` untouched (verified via `git status`,
+clean). Final state: **27/27 green against `migrated/` AND 27/27 green against
+`original/` with the identical suite** (`npm run test:migrated` / `npm test` from
+`characterization/`).
 
-## Migrate stage (2026-07-07)
+### Sequencing deviation (logged up front)
 
-### Step 1 — scaffold `migrated/`
-- Copied `original/` → `migrated/` verbatim (rsync, `.git` excluded; `diff -r` confirms
-  identical `src/`). `npm install` in `migrated/` at the *legacy* versions
-  (react-redux 5.1.2, redux 3.7.2) so the dual-target harness exercises an unmodified
-  baseline first.
-- **Tests:** 30/30 green `TARGET=original`, 30/30 green `TARGET=migrated`.
+- **[rationale] Dependency bump landed with module 1, not last (plan step 5)**: a
+  `connect()`→`useSelector`/`useDispatch` conversion cannot execute against
+  react-redux 5 — the hooks don't exist there — so `migrated/package.json`
+  (`react@18.3`, `react-dom@18.3`, `react-redux@9`, `@reduxjs/toolkit@2`; devDeps
+  `@testing-library/react@14` + `@testing-library/dom@9` so the harness's
+  TARGET=migrated alias resolves React-18-compatible test libs) had to exist before
+  any component conversion could be gated. Every converted module was therefore
+  tested against the modern runtime immediately, which is the plan's underlying
+  intent (no untested-runtime window).
+- **[note] Per-module full-suite gates**: `tests/helpers/freshApp.js` statically
+  imports both `@app/Counter` and `@app/TodoList`, so component test files can only
+  run against `migrated/` once both components exist. Gates actually run: module 1 →
+  `store.test.js` vs migrated (13/13) + full suite vs original (27/27); modules 2+3 →
+  full suite vs migrated + full suite vs original (27/27 each). No module advanced
+  with anything red.
 
-## Migrate stage (2026-07-08, resumed — prior adapter attempt died on a credit error)
+### Module 1 — `store.js` (13/13 store tests green vs migrated)
 
-### Step 2 — dependency upgrade only (no source changes)
-- Found on resume: `migrated/package.json` already bumped to `react-redux@^8.1.3` +
-  `redux@^4.2.1` (installed 8.1.3 / 4.2.1; react stays 16.14.0) but **unverified** — the
-  log recorded only step 1 and the prior migrate attempt exited before running tests.
-  `migrated/src` confirmed still byte-identical to `original/src` (`diff -r`).
-- **Verification found a real gap:** `TARGET=migrated` failed 13/30 with "Invalid hook call"
-  — react-redux 8's Provider resolved React from `migrated/node_modules` while
-  `@testing-library/react` (CJS, un-aliasable require chain) pulled `react-dom` from
-  `characterization/node_modules`: two React instances.
-- **[rationale] Added `@testing-library/{react,dom,jest-dom}` as devDependencies in
-  `migrated/`** (same versions as characterization/): per the dual-target harness design
-  already documented in `vitest.config.mjs`, the migrated target must carry its own test
-  libraries so Node sibling resolution keeps a single React instance. Test tooling only —
-  zero runtime-dependency or source change.
-- **Tests:** 30/30 green `TARGET=original`, 30/30 green `TARGET=migrated`. The 5→8
-  `connect()` hop alone is proven safe (plan §4 step 2 / R5 contained).
+- **[rationale] RTK `configureStore` replaces deprecated `createStore`+`combineReducers`;
+  creators and reducers stay hand-written verbatim**: the pinned public action shape
+  `{ type: 'ADD_TODO', text }` carries its payload in a top-level `text` field, and
+  RTK's `createSlice`/`createAction` can only emit data under `payload` (prepare
+  callbacks return `{payload, meta, error}` only) — so the plan's "RTK with action
+  types pinned to legacy strings" resolves to: RTK for store construction, legacy
+  switch reducers and creators copied unchanged (also preserving the pinned
+  referential-equality semantics on unknown actions).
+- **[rationale] Default thunk middleware disabled** (`middleware: gDM => gDM({ thunk: false })`):
+  the legacy store had no middleware, so `dispatch(fn)` threw; leaving thunk enabled
+  would silently extend the observable dispatch contract (governance rule 2). RTK's
+  dev-only immutability/serializability checks are kept — they emit no output for
+  this state shape and don't alter behavior.
+- Singleton `store` export preserved (plan decision).
 
-### Step 3 — store.js surface decision (R1)
-- **[rationale] `store.js` left completely unchanged — the optional `export const reducer`
-  is NOT added.** The analyzer flagged it only as a possible aid for test isolation, and
-  testgen already solved isolation via `vi.resetModules()` + dynamic import with zero source
-  edits. Adding an export now would be an API-surface change with no consumer — pure risk,
-  no benefit (governance rule 2). P5/P6 confirmed: reducers/action creators are untouched;
-  `redux@4` `createStore` is behavior-identical for this usage.
-- **Tests:** unchanged from step 2 — 30/30 both targets.
+### Module 2 — `Counter.js`
 
-### Step 4 — Counter.js → function component + hooks
-- Class with render-only body (P1) → arrow function component; `connect(mapStateToProps,
-  mapDispatchToProps)` → `useSelector(state => state.counter)` + `useDispatch`, dispatch
-  calls inlined in the onClick closures. Default export is now the bare component (no HOC
-  wrapper) — R4 covered: rendering without `<Provider>` still throws (wiring tests assert
-  throw-only, not message text, exactly because the failure mode changed from connect's
-  "Could not find store" to the hook's own error).
-- **[rationale]** Selector returns the same primitive slice (`state.counter`) the old
-  `mapStateToProps` produced, so re-render behavior under reference equality is unchanged.
-- **Tests:** 30/30 `TARGET=migrated`, 30/30 `TARGET=original`.
+- Class → function component; `connect(mapStateToProps, mapDispatchToProps)` →
+  `useSelector(state => state.counter)` + `useDispatch`, handlers as inline closures.
+  DOM output identical (`div.counter`, `-` button, count span, `+` button).
+- **[flag] API narrowing per plan risk 3**: without `connect()`, `count`/`onIncrement`/
+  `onDecrement` are no longer overridable via ownProps. No consumer in this repo
+  passes them; narrowing accepted and logged (also applies to `todos`/`onAddTodo`
+  in module 3).
 
-### Step 5 — TodoList.js → function component + useState + hooks
-- `constructor`/`this.state.text`/manual `.bind(this)` (P2) → `useState('')` with inline
-  arrow handlers; `connect` → `useSelector(state => state.todos)` + `useDispatch`.
-- **[rationale] R2 preserved verbatim:** guard stays `if (!text) return;` — no `.trim()`.
-  Whitespace-only and `"0"` still submit; a source comment now marks this as deliberate.
-- **[rationale] R6 ordering preserved:** dispatch-before-clear (`dispatch(addTodo(text))`
-  then `setText('')`), same as the class's read-then-clear sequence; no batched multi-field
-  updates exist so semantics are identical.
-- **[rationale] R3/P7 preserved:** `key={i}` index keys kept — the list is append-only and
-  changing key derivation would alter reconciliation, which is outside the lane.
-- **Tests:** 30/30 `TARGET=migrated`, 30/30 `TARGET=original`.
+### Module 3 — `TodoList.js`
 
-### Step 6 — completion sweep
-- Grep over `migrated/src/`: zero occurrences of `connect`, `React.Component`,
-  `this.state`, `this.props`, or `.bind(this)`. `store.js` byte-identical to original
-  (only diff in the tree is the two component files + package.json dev/dep versions).
-- Build-equivalent check: the fixture has no build script, so each migrated module was
-  parsed standalone with esbuild (`loader: jsx`) — all three parse clean; vitest's
-  transform pipeline exercises the same path on every run.
-- **Final gate: 30/30 green `TARGET=original`, 30/30 green `TARGET=migrated`.** Same
-  characterization suite, unchanged, against both trees. Migration sequence complete;
-  `original/` untouched throughout (governance rule 4).
+- Constructor state + two `.bind(this)` handlers → `useState('')` + closure handlers.
+- **Preserved verbatim per plan flags**: the no-trim empty-string guard (`if (!text)`)
+  so whitespace-only and `'0'` todos ARE added (both pinned by tests); the
+  dispatch-then-clear submit order; `key={i}` index keys (remount semantics
+  unchanged).
+
+### Full-suite gate + one harness accommodation (flagged)
+
+- First full run vs `migrated/`: **26/27** — the only failure was
+  `Counter.test.js` "external store.dispatch updates the rendered count", which
+  dispatched from outside React and synchronously asserted the DOM. React 16 +
+  react-redux 5 flushed subscriber re-renders synchronously; React 18's concurrent
+  root batches externally-originated updates into a microtask, so the DOM read one
+  tick too early. This is framework-internal flush *timing*, not app behavior — the
+  store→view wiring still updates the count (plan risk 7 anticipated exactly this).
+- **[rationale / only test change] Wrapped that one dispatch in `act()`** (valid on
+  both stacks: RTL has exported `act` since v9), asserting "the view reflects the
+  dispatch once processed" instead of the legacy synchronous flush. The modified
+  suite was then re-run against `original/` — still 27/27 — so the golden-master
+  equivalence gate remains: identical suite, both trees green. No app source was
+  changed to pass any test.
+- Final: `npm run test:migrated` → 27 passed (27); `npm test` (TARGET=original) →
+  27 passed (27). No act()/deprecation warnings in the migrated run. Gates and six
+  decision rationales recorded in `run-state.json`.

@@ -1,12 +1,10 @@
-/**
- * `store.js` creates and exports a single module-scoped `store` singleton
- * (no reducer is exported to reconstruct one independently). To get test
- * isolation without touching original/migrated source, reset the module
- * registry and re-import: this forces a brand-new singleton per test.
- * Counter.js/TodoList.js import './store' by relative path, which resolves
- * to the same module instance as '@app/store' after the reset, so the
- * rendered components and the test's assertions share one fresh store.
- */
+// store.js exports only the built `store` singleton (no reducer to
+// reconstruct independently), so two tests sharing an import would leak
+// counter/todos state across cases. Reset the module registry and re-import
+// to force a brand-new singleton per test, with zero edits to original/ or
+// migrated/. Counter.js/TodoList.js import './store' by relative path, which
+// resolves to the same freshly-registered module after the reset, so the
+// rendered components and the test's assertions always share one store.
 import { vi } from 'vitest';
 
 export async function freshApp() {

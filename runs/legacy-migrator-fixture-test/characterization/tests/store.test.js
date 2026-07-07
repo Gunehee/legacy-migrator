@@ -6,12 +6,12 @@ async function freshStore() {
 }
 
 describe('store.js', () => {
-  it('initial state shape: { counter: 0, todos: [] }', async () => {
+  it('initial state is exactly { counter: 0, todos: [] }', async () => {
     const { store } = await freshStore();
     expect(store.getState()).toEqual({ counter: 0, todos: [] });
   });
 
-  it('action creators produce exact shapes', async () => {
+  it('action creators produce exact shapes, including the text (not payload) field', async () => {
     const { increment, decrement, addTodo } = await freshStore();
     expect(increment()).toEqual({ type: 'INCREMENT' });
     expect(decrement()).toEqual({ type: 'DECREMENT' });
@@ -19,13 +19,13 @@ describe('store.js', () => {
   });
 
   describe('counter slice', () => {
-    it('INCREMENT: 0 -> 1', async () => {
+    it('INCREMENT moves the counter 0 -> 1', async () => {
       const { store, increment } = await freshStore();
       store.dispatch(increment());
       expect(store.getState().counter).toBe(1);
     });
 
-    it('DECREMENT: 0 -> -1, no clamping at zero', async () => {
+    it('DECREMENT moves the counter 0 -> -1, no clamping at zero', async () => {
       const { store, decrement } = await freshStore();
       store.dispatch(decrement());
       expect(store.getState().counter).toBe(-1);
@@ -38,7 +38,7 @@ describe('store.js', () => {
       expect(store.getState().counter).toBe(-2);
     });
 
-    it('unknown action leaves counter unchanged', async () => {
+    it('unknown action types leave the counter unchanged', async () => {
       const { store, increment } = await freshStore();
       store.dispatch(increment());
       store.dispatch({ type: 'NOT_A_REAL_ACTION' });
@@ -68,18 +68,6 @@ describe('store.js', () => {
       expect(store.getState().todos).toEqual(['a', 'b', 'c']);
     });
 
-    it('ADD_TODO with whitespace-only text is appended verbatim (no trim in reducer)', async () => {
-      const { store, addTodo } = await freshStore();
-      store.dispatch(addTodo('   '));
-      expect(store.getState().todos).toEqual(['   ']);
-    });
-
-    it('ADD_TODO with an empty string is appended when dispatched directly (reducer has no guard)', async () => {
-      const { store, addTodo } = await freshStore();
-      store.dispatch(addTodo(''));
-      expect(store.getState().todos).toEqual(['']);
-    });
-
     it('duplicate todo text is allowed', async () => {
       const { store, addTodo } = await freshStore();
       store.dispatch(addTodo('dup'));
@@ -87,7 +75,7 @@ describe('store.js', () => {
       expect(store.getState().todos).toEqual(['dup', 'dup']);
     });
 
-    it('unknown action returns the exact same array reference (no mutation, no copy)', async () => {
+    it('unknown action types return the exact same array reference (no mutation, no copy)', async () => {
       const { store, addTodo } = await freshStore();
       store.dispatch(addTodo('keep'));
       const before = store.getState().todos;
@@ -95,7 +83,7 @@ describe('store.js', () => {
       expect(store.getState().todos).toBe(before);
     });
 
-    it('ADD_TODO returns a new array identity, leaving prior state untouched', async () => {
+    it('ADD_TODO returns a new array identity, leaving prior state untouched (no mutation)', async () => {
       const { store, addTodo } = await freshStore();
       const before = store.getState().todos;
       store.dispatch(addTodo('new'));
