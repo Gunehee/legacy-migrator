@@ -26,7 +26,10 @@
     },
     {
       "stage": "migrate",
-      "status": "pending"
+      "status": "passed",
+      "finishedAt": "2026-07-07T08:00:25.142Z",
+      "executor": "fable",
+      "notes": "M0-M7 complete: 0 class components, 0 connect(), all upstream behaviors preserved per log"
     },
     {
       "stage": "review",
@@ -127,6 +130,14 @@
       "cwd": "runs/react-redux-realworld-example-app/characterization",
       "ok": true,
       "summary": "M1-M4: Tests 157 passed (157)"
+    },
+    {
+      "ts": "2026-07-07T08:00:25.139Z",
+      "stage": "migrate",
+      "command": "vitest run (both targets) + vite build + preview",
+      "cwd": "runs/react-redux-realworld-example-app",
+      "ok": true,
+      "summary": "original 157/157, migrated 157/157, build clean 244KB, preview HTTP 200"
     }
   ]
 }

@@ -79,6 +79,36 @@ green on the affected target(s) + `vite build` where noted. Original is never ed
   `ev.target.value` eagerly in the handler. This is exactly the class-→hooks regression
   category the characterization suite exists to catch.
 
+## M5 — page components → hooks ✅ 157/157
+
+- `Home`, `Article`: mount effects replace `componentWillMount`/`WillUnmount`; route
+  params via `useParams`. Home reads `token` at mount only (matching willMount); every
+  token transition redirects to `/`, remounting the page.
+- `Profile` + `ProfileFavorites`: the `extends Profile` class inheritance is dissolved
+  into a shared `ProfileView({ activeTab, buildLoader })`. Preserved exactly: only
+  favorites passes a `pager` (profile pagination falls back to `Articles.all` — upstream
+  bug #8), the `state={currentPage}` prop typo (ArticleList never receives `currentPage`
+  on profiles), mount-only fetching (original never refetched on param change), and the
+  empty-shell render while `state.profile` is still `{}`.
+
+## M6 — App shell → hooks ✅ 157/157
+
+- Auth bootstrap (`localStorage` jwt → `agent.setToken` → `APP_LOAD`) in a mount effect;
+  redirect watcher (`redirectTo` → `history.push` → `REDIRECT`) in a `[redirectTo]`
+  effect — same observable ordering as `componentWillReceiveProps`. Route table and the
+  pre-`appLoaded` header-only render preserved verbatim.
+
+## M7 — sweep + final validation ✅
+
+- Zero `React.Component`, `connect(`, deprecated lifecycles, `react-router-redux`,
+  `superagent-promise`, `global.Promise` references remain in `migrated/src` (only
+  explanatory comments mention the old lifecycle names).
+- `CommentContainer`'s `<list-errors>` lowercase pseudo-element kept as-is (upstream bug:
+  comment errors are never actually rendered; fixing it would be a behavior change).
+- Final gates: characterization suite **157/157 on original** and **157/157 on
+  migrated**; `vite build` clean (244 KB bundle, down from 254 KB at M0 after dead
+  router-redux code dropped); `vite preview` serves HTTP 200.
+
 - Test harness fix (characterization/, not app code): `renderApp` now picks
   ConnectedRouter vs plain Router by probing `'router' in store.getState()`; migrated/
   carries RTL 12 as devDependency so the suite renders each target with its own React
