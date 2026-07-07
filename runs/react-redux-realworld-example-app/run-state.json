@@ -12,7 +12,10 @@
     },
     {
       "stage": "analyze",
-      "status": "pending"
+      "status": "passed",
+      "finishedAt": "2026-07-07T05:04:59.902Z",
+      "executor": "fable",
+      "notes": "migration-plan.md: 7 risks, M0-M7 sequence, 4-layer characterization plan"
     },
     {
       "stage": "testgen",
@@ -40,6 +43,31 @@
       "ts": "2026-07-07T05:00:48.729Z",
       "stage": "select",
       "rationale": "Chose archived MIT realworld app over larger GPL/unlicensed candidates; 2340 LOC slightly under rough floor — flagged in target-rationale.md"
+    },
+    {
+      "ts": "2026-07-07T05:04:59.905Z",
+      "stage": "analyze",
+      "rationale": "React 17 (not 18): createRoot auto-batching would change observable update timing — out of migration scope"
+    },
+    {
+      "ts": "2026-07-07T05:04:59.906Z",
+      "stage": "analyze",
+      "rationale": "react-router-dom 5.3.4 (not 6): v4 Switch/Route/exact semantics carry over identically; v6 rewrite listed as follow-up"
+    },
+    {
+      "ts": "2026-07-07T05:04:59.907Z",
+      "stage": "analyze",
+      "rationale": "marked stays pinned 0.3.6: sanitize:true removed in modern marked, exact escaping not reproducible — CVEs flagged for review report"
+    },
+    {
+      "ts": "2026-07-07T05:04:59.909Z",
+      "stage": "analyze",
+      "rationale": "superagent kept, superagent-promise dropped: superagent>=3 natively thenable with identical resolve/reject shapes; HTTP lib swap is out of lane"
+    },
+    {
+      "ts": "2026-07-07T05:04:59.910Z",
+      "stage": "analyze",
+      "rationale": "Known upstream bugs preserved, not fixed (pagination page-size mismatch, jwt '' on logout, undefined controlled inputs, DELETE_COMMENT null assumption)"
     }
   ],
   "testGates": []
