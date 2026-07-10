@@ -4,10 +4,13 @@
  *
  *   legacy-migrator run --repo <github-url> [--lane <lane>] [--name <run-name>]
  *   legacy-migrator status [run-name]
+ *   legacy-migrator report --repo <run-name-or-url> [--runs-root <dir>]
  *
  * `run` executes the full pipeline (clone → analyze → testgen → migrate →
- * review → document), gating each stage per the governance rules. `status`
- * renders run state from core's RunStore.
+ * review → document → validate), gating each stage per the governance rules.
+ * `status` renders run state from core's RunStore. `report` regenerates
+ * report.html from whatever is already on disk — no pipeline stage re-runs,
+ * useful after tweaking the report template.
  */
 
 import { realpathSync } from 'node:fs';
@@ -15,7 +18,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 
-import { Pipeline, RunStore, type RunRecord } from '@legacy-migrator/core';
+import { generateReport, Pipeline, RunStore, type RunRecord } from '@legacy-migrator/core';
 import { PIPELINE_AGENTS } from '@legacy-migrator/agents';
 
 export const DEFAULT_RUNS_ROOT = join(process.cwd(), 'runs');
@@ -24,6 +27,11 @@ export function repoNameFromUrl(url: string): string {
   const m = url.replace(/\.git$/, '').match(/([^/]+)\/?$/);
   if (!m) throw new Error(`cannot derive run name from repo url: ${url}`);
   return m[1];
+}
+
+/** Accepts either a full repo URL (like `run --repo`) or a bare run name. */
+export function runNameFrom(value: string): string {
+  return value.includes('://') || value.startsWith('git@') ? repoNameFromUrl(value) : value;
 }
 
 export function renderStatus(record: RunRecord): string {
@@ -83,6 +91,16 @@ export function runCommand(repoUrl: string, lane: string, name: string | undefin
   console.log(renderStatus(pipeline.store.load(runName)));
 }
 
+/** Regenerates report.html from whatever run-state.json + markdown artifacts
+ * already exist on disk — no pipeline stage is invoked, no model call happens. */
+export function reportCommand(repoOrName: string, runsRoot: string): void {
+  const store = new RunStore(runsRoot);
+  const runName = runNameFrom(repoOrName);
+  store.load(runName); // throws a clear "no run record" error if it doesn't exist
+  const path = generateReport(join(runsRoot, runName));
+  console.log(`wrote ${path}`);
+}
+
 export function statusCommand(name: string | undefined, runsRoot: string): void {
   const store = new RunStore(runsRoot);
   const names = name ? [name] : store.list();
@@ -118,8 +136,22 @@ export function main(argv = process.argv.slice(2)): void {
       allowPositionals: true,
     });
     statusCommand(positionals[0], values['runs-root']!);
+  } else if (command === 'report') {
+    const { values } = parseArgs({
+      args: rest,
+      options: {
+        repo: { type: 'string' },
+        'runs-root': { type: 'string', default: DEFAULT_RUNS_ROOT },
+      },
+    });
+    if (!values.repo) {
+      console.error('usage: legacy-migrator report --repo <run-name-or-url> [--runs-root <dir>]');
+      process.exitCode = 2;
+      return;
+    }
+    reportCommand(values.repo, values['runs-root']!);
   } else {
-    console.error('usage: legacy-migrator <run|status> [options]');
+    console.error('usage: legacy-migrator <run|status|report> [options]');
     process.exitCode = 2;
   }
 }

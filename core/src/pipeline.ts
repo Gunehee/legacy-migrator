@@ -13,6 +13,7 @@ import { join } from 'node:path';
 
 import { buildAdapter, type ExecutorAdapter } from './adapters.js';
 import { runTestGate } from './eval.js';
+import { generateReport } from './report.js';
 import { Router } from './router.js';
 import { newTask, type TaskResult } from './task.js';
 import { RunStore, type RunRecord, type StageName } from './state.js';
@@ -53,6 +54,13 @@ export interface AgentStage {
    * the whole stage — gateCommand/validationCommand are ignored if also set.
    */
   runDeterministic?(ctx: RunContext): DeterministicResult;
+  /**
+   * When true, report.html is regenerated once this stage's final pass/fail
+   * status is persisted to run-state.json — after, not during, so the
+   * report's stage timeline reflects this stage's true outcome rather than
+   * the transient 'running' status it has while its own logic executes.
+   */
+  regenerateReportAfter?: boolean;
 }
 
 export interface RunContext {
@@ -160,6 +168,7 @@ export class Pipeline {
     }
 
     this.store.setStage(record.name, stage.stage, 'passed', { costUsd: result.costUsd });
+    if (stage.regenerateReportAfter) generateReport(ctx.runDir);
     return result;
   }
 
@@ -174,6 +183,9 @@ export class Pipeline {
       notes: outcome.notes,
       costUsd: outcome.costUsd,
     });
+    // Runs after the status above is persisted (pass OR fail) — see
+    // AgentStage.regenerateReportAfter's doc comment for why the ordering matters.
+    if (stage.regenerateReportAfter) generateReport(ctx.runDir);
     return {
       taskId,
       executor: 'deterministic',
