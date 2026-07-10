@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>legacy-migrator report — react-redux-realworld-example-app</title>
+<style>
+:root {
+  --surface: #fcfcfb; --page: #f9f9f7; --panel: #f3f2ef; --border: #e1e0d9;
+  --ink: #0b0b0b; --ink-2: #52514e; --ink-3: #898781;
+  --s-good: #0ca30c; --s-warn: #fab219; --s-crit: #d03b3b;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #1a1a19; --page: #0d0d0d; --panel: #232322; --border: #2c2c2a;
+    --ink: #ffffff; --ink-2: #c3c2b7; --ink-3: #898781;
+    --s-good: #0ca30c; --s-warn: #fab219; --s-crit: #d03b3b;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink);
+       font: 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+.wrap { max-width: 1000px; margin: 0 auto; padding: 32px 24px 64px; }
+h1 { font-size: 26px; margin: 0 0 4px; }
+h2 { font-size: 17px; margin: 40px 0 12px; }
+.sub { color: var(--ink-2); margin: 0 0 10px; }
+a { color: var(--s-good); }
+.meta { display: flex; gap: 28px; flex-wrap: wrap; margin: 18px 0 6px;
+        padding: 14px 18px; background: var(--panel);
+        border: 1px solid var(--border); border-radius: 10px; }
+.meta div { min-width: 130px; }
+.meta .k { font-size: 12px; color: var(--ink-3); text-transform: uppercase;
+           letter-spacing: .04em; }
+.meta .v { font-size: 20px; font-weight: 600; }
+.stagebar { display: flex; flex-wrap: wrap; border-radius: 10px; overflow: hidden;
+            border: 1px solid var(--border); }
+.step { flex: 1 1 150px; padding: 16px 14px 12px; background: var(--surface);
+        border-right: 1px solid var(--border); border-top: 4px solid var(--ink-3); }
+.step:last-child { border-right: none; }
+.step.pass { border-top-color: var(--s-good); }
+.step.fail { border-top-color: var(--s-crit); }
+.step.pending { border-top-color: var(--s-warn); }
+.step .name { font-weight: 700; font-size: 13px; text-transform: capitalize; }
+.step .icon { margin-right: 5px; }
+.step.pass .icon { color: var(--s-good); }
+.step.fail .icon { color: var(--s-crit); }
+.step.pending .icon { color: var(--s-warn); }
+.step .sub2 { font-size: 12px; color: var(--ink-3); margin-top: 6px; line-height: 1.5; }
+.legend { display: flex; gap: 18px; flex-wrap: wrap; margin: 10px 0 4px;
+          font-size: 13px; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.chip { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+.banner { border-radius: 10px; padding: 16px 18px; margin: 12px 0;
+          border: 1px solid var(--border); border-left: 6px solid var(--ink-3);
+          background: var(--panel); }
+.banner.good { border-left-color: var(--s-good); }
+.banner.crit { border-left-color: var(--s-crit); }
+.banner .verdict { font-size: 18px; font-weight: 700; }
+.banner .verdict .icon { margin-right: 8px; }
+.stats-grid { display: flex; gap: 16px; flex-wrap: wrap; }
+.stat { flex: 1 1 150px; background: var(--panel); border: 1px solid var(--border);
+        border-radius: 10px; padding: 14px 16px; }
+.stat .k { font-size: 12px; color: var(--ink-3); text-transform: uppercase;
+           letter-spacing: .04em; }
+.stat .v { font-size: 22px; font-weight: 600; margin-top: 2px; }
+.pattern-list { margin: 10px 0 0; padding: 0; list-style: none; }
+.pattern-list li { padding: 6px 10px; border-radius: 6px; font-size: 14px;
+                    display: flex; align-items: center; gap: 8px; }
+.pattern-list li:nth-child(odd) { background: var(--panel); }
+.pattern-list .icon.good { color: var(--s-good); }
+.pattern-list .icon.crit { color: var(--s-crit); }
+table { border-collapse: collapse; width: 100%; margin-top: 10px; font-size: 14px; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--border); }
+th { font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.decision { padding: 8px 10px; border-radius: 6px; font-size: 14px; margin-bottom: 4px; }
+.decision:nth-child(odd) { background: var(--panel); }
+.decision .stage-tag { display: inline-block; font-size: 11px; font-weight: 700;
+                        text-transform: uppercase; letter-spacing: .04em; color: var(--ink-3);
+                        margin-right: 8px; }
+details { margin-top: 14px; border: 1px solid var(--border); border-radius: 10px;
+          padding: 10px 16px; background: var(--panel); }
+summary { cursor: pointer; color: var(--ink-2); font-size: 14px; font-weight: 600; }
+details .md-body { margin-top: 10px; font-size: 14px; color: var(--ink-2); }
+details .md-body h1, details .md-body h2, details .md-body h3 { color: var(--ink); }
+details .md-body pre { background: var(--surface); padding: 10px; border-radius: 6px;
+                        overflow-x: auto; border: 1px solid var(--border); }
+code { background: var(--surface); padding: 1px 5px; border-radius: 4px;
+       border: 1px solid var(--border); font-size: 13px; }
+.footer { margin-top: 48px; font-size: 13px; color: var(--ink-3); }
+.footer a { margin-right: 14px; }
+</style></head><body><div class="wrap">
+
+<h1>react-redux-realworld-example-app</h1>
+<p class="sub">lane: <code>class-react-to-hooks</code> · source: <a href="https://github.com/gothinkster/react-redux-realworld-example-app">https://github.com/gothinkster/react-redux-realworld-example-app</a></p>
+<div class="meta">
+  <div><div class="k">run created</div><div class="v">2026-07-07</div></div>
+  <div><div class="k">wall-clock (sum of stages)</div><div class="v">4s</div></div>
+  <div><div class="k">total cost</div><div class="v">$0.0000</div></div>
+</div>
+
+<h2>Pipeline stages</h2>
+<div class="stagebar"><div class="step pass">
+      <div class="name"><span class="icon">&#10003;</span>analyze</div>
+      <div class="sub2">fable<br>— · —</div>
+    </div><div class="step pass">
+      <div class="name"><span class="icon">&#10003;</span>testgen</div>
+      <div class="sub2">sonnet<br>— · —</div>
+    </div><div class="step pass">
+      <div class="name"><span class="icon">&#10003;</span>migrate</div>
+      <div class="sub2">fable<br>— · —</div>
+    </div><div class="step pass">
+      <div class="name"><span class="icon">&#10003;</span>review</div>
+      <div class="sub2">sonnet<br>— · —</div>
+    </div><div class="step pass">
+      <div class="name"><span class="icon">&#10003;</span>document</div>
+      <div class="sub2">haiku<br>— · —</div>
+    </div><div class="step pass">
+      <div class="name"><span class="icon">&#10003;</span>validate</div>
+      <div class="sub2">deterministic<br>4s · $0.0000</div>
+    </div></div>
+<div class="legend">
+  <span><span class="chip" style="background:var(--s-good)"></span>passed</span>
+  <span><span class="chip" style="background:var(--s-crit)"></span>failed</span>
+  <span><span class="chip" style="background:var(--s-warn)"></span>pending / not yet run</span>
+</div>
+
+<h2>Test proof</h2>
+<div class="banner good"><div class="verdict"><span class="icon">&#10003;</span>157/157 passing on both original and migrated</div></div>
+
+<h2>Before / after code</h2>
+<div class="stats-grid">
+      <div class="stat"><div class="k">files changed</div><div class="v">41</div></div>
+      <div class="stat"><div class="k">lines added</div><div class="v">+1157</div></div>
+      <div class="stat"><div class="k">lines removed</div><div class="v">&minus;1330</div></div>
+    </div>
+<div class="sub" style="margin-top:14px">Legacy pattern sweep (from validate-report.md):</div>
+<ul class="pattern-list"><li><span class="icon good">&#10003;</span>0 remaining <code>extends React.Component / Component</code> calls</li><li><span class="icon good">&#10003;</span>0 remaining <code>connect(</code> calls</li><li><span class="icon good">&#10003;</span>0 remaining <code>this.setState</code> calls</li></ul>
+
+<h2>Decision log</h2>
+<div class="decision"><span class="stage-tag">select</span>Chose archived MIT realworld app over larger GPL/unlicensed candidates; 2340 LOC slightly under rough floor — flagged in target-rationale.md</div>
+<div class="decision"><span class="stage-tag">analyze</span>React 17 (not 18): createRoot auto-batching would change observable update timing — out of migration scope</div>
+<div class="decision"><span class="stage-tag">analyze</span>react-router-dom 5.3.4 (not 6): v4 Switch/Route/exact semantics carry over identically; v6 rewrite listed as follow-up</div>
+<div class="decision"><span class="stage-tag">analyze</span>marked stays pinned 0.3.6: sanitize:true removed in modern marked, exact escaping not reproducible — CVEs flagged for review report</div>
+<div class="decision"><span class="stage-tag">analyze</span>superagent kept, superagent-promise dropped: superagent&gt;=3 natively thenable with identical resolve/reject shapes; HTTP lib swap is out of lane</div>
+<div class="decision"><span class="stage-tag">analyze</span>Known upstream bugs preserved, not fixed (pagination page-size mismatch, jwt &#39;&#39; on logout, undefined controlled inputs, DELETE_COMMENT null assumption)</div>
+<div class="decision"><span class="stage-tag">testgen</span>Characterized 7 as-is behaviors incl. DELETE_COMMENT throw on undefined comments, logout jwt=&#39;&#39;  not removeItem, settings ASYNC_START no subtype gate, unreachable PROFILE_FAVORITES_* action types, omitSlug slug:undefined key, marked sanitize escaping, unguarded favorite dispatch</div>
+<div class="decision"><span class="stage-tag">migrate</span>M0: .js→.jsx renames so stock Vite handles JSX; extensionless imports unchanged</div>
+<div class="decision"><span class="stage-tag">migrate</span>M0: dropped write-only state.router slice with react-router-redux; redirect now history.push in App</div>
+<div class="decision"><span class="stage-tag">migrate</span>M4: Editor stale-slug willReceiveProps bug NOT replicated (unreachable path) — flagged in migration-log.md</div>
+<div class="decision"><span class="stage-tag">migrate</span>M4: Settings never dispatched SETTINGS_PAGE_UNLOADED upstream — preserved exactly</div>
+<div class="decision"><span class="stage-tag">migrate</span>M4: controlled-input eager ev.target.value capture — lazy read inside setState updater loses keystrokes (caught by settings flow test)</div>
+<div class="decision"><span class="stage-tag">document</span>Corrected doc-writer overclaims: app age 2018-era not 10yrs, bundle-size baseline was M0 Vite build not CRA, softened perf/security claims</div>
+
+<h2>Full migration log</h2>
+<details><summary>migration-log.md — what changed, why, and test status, module by module</summary>
+<div class="md-body"><h1>Migration log — react-redux-realworld-example-app</h1>
+<p>Executor: migrator (fable). Gate for every step: full characterization suite (157 tests)
+green on the affected target(s) + <code>vite build</code> where noted. Original is never edited.</p>
+<h2>Baseline</h2>
+<p>- Characterization suite: <strong>157/157 green on original</strong> (see run-state.json testGates).
+- As-is behaviors characterized, preserved deliberately (NOT fixed — governance rule 2):
+  1. <code>DELETE_COMMENT</code> reducer throws if <code>state.comments</code> is undefined.
+  2. LOGOUT writes <code>&#39;&#39;</code> to <code>localStorage.jwt</code> (never <code>removeItem</code>).
+  3. <code>settings</code> reducer sets <code>inProgress: true</code> on ANY <code>ASYNC_START</code> (no subtype gate).
+  4. <code>PROFILE_FAVORITES_PAGE_LOADED/UNLOADED</code> action types are defined and reduced but
+     never dispatched by any component (ProfileFavorites reuses <code>PROFILE_PAGE_*</code>).
+  5. <code>omitSlug</code> leaves a present-but-undefined <code>slug</code> key in the update payload.
+  6. <code>marked</code> <code>sanitize: true</code> escapes raw HTML into visible text.
+  7. Favorite/unfavorite dispatches without a login guard.
+  8. Profile pages fetch 5 articles/page but <code>ListPagination</code> paginates by 10.
+  9. Login/Register inputs start as <code>value={undefined}</code> (uncontrolled→controlled warning).</p>
+<h2>M0 — toolchain strangler step (no component-logic changes) ✅ 157/157 migrated + original, vite build clean</h2>
+<p>- Copied <code>original/src</code> verbatim into <code>migrated/src</code>; JSX-bearing files renamed <code>.js → .jsx</code>
+  (24 components + entry). *Rationale: stock Vite/esbuild handles JSX by extension; import
+  specifiers are extensionless so no call sites change.*
+- New stack: Vite 5.4 + <code>@vitejs/plugin-react</code>; React/ReactDOM <strong>17.0.2</strong>; react-redux
+  <strong>8.1.3</strong>; react-router-dom <strong>5.3.4</strong>; redux <strong>4.2.1</strong>; <code>@redux-devtools/extension</code>
+  (renamed upstream package, same API). *Rationale: React 17 keeps <code>ReactDOM.render</code>
+  semantics (18&#39;s createRoot batching would change observable timing); router v5 keeps v4
+  <code>Switch</code>/<code>Route</code> matching; both give the hooks APIs the lane needs.*
+- <code>index.html</code> moved to Vite root; <code>%PUBLIC_URL%</code> dropped; script tag → <code>/src/index.jsx</code>.
+- <code>store.js</code>: <code>process.env.NODE_ENV === &#39;production&#39;</code> → <code>import.meta.env.PROD</code> (same
+  runtime meaning under Vite); <code>routerMiddleware</code>/<code>history/createBrowserHistory</code> deep
+  import → <code>createBrowserHistory</code> named import (history 4 API, version unchanged).
+- <code>reducer.js</code>: dropped <code>router: routerReducer</code>. *Rationale: verified no component reads
+  <code>state.router</code>; the store slice was write-only.*
+- <code>App.jsx</code>: <code>store.dispatch(push(to))</code> → <code>history.push(to)</code> — removes react-router-redux
+  and the component&#39;s direct store-singleton import. *Rationale: identical navigation
+  observable; redirect still fires on <code>redirectTo</code> + resets via <code>REDIRECT</code>.*
+- <code>agent.js</code>: dropped <code>superagent-promise</code> wrapper — superagent ≥3 requests are natively
+  thenable with the same resolve (<code>res</code>) / reject (<code>error.response</code>) shapes; version kept
+  at 3.8.3. *Rationale: shim removal is in scope; an HTTP-client swap is not.*
+## M1+M2 — stateless classes + dispatch-only connects → hooks ✅ 157/157</p>
+<p>- <code>Header</code>, <code>ListErrors</code>: class → function (render-only; markup byte-identical).
+- <code>ArticlePreview</code>, <code>ListPagination</code>, <code>MainView</code>, <code>ArticleActions</code>, <code>DeleteButton</code>:
+  <code>connect()</code> wrappers removed → <code>useDispatch</code> (+ <code>useSelector</code> in MainView). Dispatched
+  action shapes kept identical, including <code>CHANGE_TAB</code>&#39;s <code>pager</code> being the raw agent
+  function and <code>SET_PAGE</code>&#39;s pager-vs-<code>Articles.all</code> fallback.</p>
+<h2>M3 — form components → hooks ✅ 157/157</h2>
+<p>- <code>Login</code>, <code>Register</code>: <code>connect</code> → <code>useSelector(state.auth)</code> + <code>useDispatch</code>; unload
+  dispatch moved from <code>componentWillUnmount</code> to <code>useEffect</code> cleanup. Inputs keep
+  <code>value={undefined}</code>-until-typed behavior (preserved bug #9).
+- <code>CommentInput</code>: local <code>body</code> state → <code>useState</code>; clear-then-dispatch order kept.</p>
+<h2>M4 — Editor + Settings (deprecated lifecycles) ✅ 157/157</h2>
+<p>- <code>Editor</code>: <code>componentWillMount</code>/<code>WillReceiveProps</code>/<code>WillUnmount</code> → one
+  <code>useEffect([slug])</code> (load on mount &amp; slug change, unload cleanup); route param via
+  <code>useParams</code>. <strong>Flagged deviation (upstream bug not replicated):</strong> the original&#39;s
+  <code>componentWillReceiveProps</code> fetched <code>this.props.match.params.slug</code> — the *old* slug —
+  when navigating editor→editor; the hooks version fetches the new slug. Path is
+  unreachable through the UI (no editor→editor links); conservative choice documented
+  here instead of reimplementing a stale-props bug.
+- <code>Editor</code> also now dispatches <code>EDITOR_PAGE_UNLOADED</code> before reload on slug change
+  (effect cleanup ordering) where the original skipped it on the slug→none transition —
+  same final reducer state (<code>EDITOR_PAGE_LOADED</code> resets all fields); the extra
+  <code>viewChangeCounter</code> bump only cancels genuinely stale in-flight responses.
+- <code>Settings</code>/<code>SettingsForm</code>: form state → <code>useState</code> initializer (mirrors
+  <code>componentWillMount</code> merge) + <code>useEffect([currentUser])</code> re-sync (mirrors
+  <code>componentWillReceiveProps</code>). Faithfully does NOT dispatch <code>SETTINGS_PAGE_UNLOADED</code> —
+  the original mapped <code>onUnload</code> but never called it (preserved bug; documented).
+- <strong>Hooks pitfall caught by the suite</strong> (settings flow test failed, then fixed):
+  translating <code>setState({[f]: ev.target.value})</code> into a *functional* updater that reads
+  <code>ev.target.value</code> inside the updater loses the keystroke — React executes the updater
+  after restoring the controlled input, so it reads the old DOM value. Fix: capture
+  <code>ev.target.value</code> eagerly in the handler. This is exactly the class-→hooks regression
+  category the characterization suite exists to catch.</p>
+<h2>M5 — page components → hooks ✅ 157/157</h2>
+<p>- <code>Home</code>, <code>Article</code>: mount effects replace <code>componentWillMount</code>/<code>WillUnmount</code>; route
+  params via <code>useParams</code>. Home reads <code>token</code> at mount only (matching willMount); every
+  token transition redirects to <code>/</code>, remounting the page.
+- <code>Profile</code> + <code>ProfileFavorites</code>: the <code>extends Profile</code> class inheritance is dissolved
+  into a shared <code>ProfileView({ activeTab, buildLoader })</code>. Preserved exactly: only
+  favorites passes a <code>pager</code> (profile pagination falls back to <code>Articles.all</code> — upstream
+  bug #8), the <code>state={currentPage}</code> prop typo (ArticleList never receives <code>currentPage</code>
+  on profiles), mount-only fetching (original never refetched on param change), and the
+  empty-shell render while <code>state.profile</code> is still <code>{}</code>.</p>
+<h2>M6 — App shell → hooks ✅ 157/157</h2>
+<p>- Auth bootstrap (<code>localStorage</code> jwt → <code>agent.setToken</code> → <code>APP_LOAD</code>) in a mount effect;
+  redirect watcher (<code>redirectTo</code> → <code>history.push</code> → <code>REDIRECT</code>) in a <code>[redirectTo]</code>
+  effect — same observable ordering as <code>componentWillReceiveProps</code>. Route table and the
+  pre-<code>appLoaded</code> header-only render preserved verbatim.</p>
+<h2>M7 — sweep + final validation ✅</h2>
+<p>- Zero <code>React.Component</code>, <code>connect(</code>, deprecated lifecycles, <code>react-router-redux</code>,
+  <code>superagent-promise</code>, <code>global.Promise</code> references remain in <code>migrated/src</code> (only
+  explanatory comments mention the old lifecycle names).
+- <code>CommentContainer</code>&#39;s <code>&lt;list-errors&gt;</code> lowercase pseudo-element kept as-is (upstream bug:
+  comment errors are never actually rendered; fixing it would be a behavior change).
+- Final gates: characterization suite <strong>157/157 on original</strong> and <strong>157/157 on
+  migrated</strong>; <code>vite build</code> clean (244 KB bundle, down from 254 KB at M0 after dead
+  router-redux code dropped); <code>vite preview</code> serves HTTP 200.</p>
+<p>- Test harness fix (characterization/, not app code): <code>renderApp</code> now picks
+  ConnectedRouter vs plain Router by probing <code>&#39;router&#39; in store.getState()</code>; migrated/
+  carries RTL 12 as devDependency so the suite renders each target with its own React
+  copy. Re-verified 157/157 on original after the change.</p></div>
+</details>
+
+<h2>Review</h2>
+<details><summary>review-report.md — post-migration code-quality pass</summary>
+<div class="md-body"><h1>Review report — react-redux-realworld-example-app migration</h1>
+<h2>Verdict</h2>
+<p>High-quality, disciplined migration. Every class component is now a correctly-written
+function component: hooks are called unconditionally before any early return, dependency
+arrays are accurate (mount-only effects carry <code>eslint-disable-next-line
+react-hooks/exhaustive-deps</code> with a comment explaining the intentional omission, exactly
+where the plan calls for it), and event values are captured eagerly before being handed to
+functional <code>setState</code>/dispatch updaters (the one real hooks regression class — stale-value
+closures — is absent everywhere, including the tricky <code>Settings</code> form case the log calls
+out). <code>connect()</code>, <code>React.Component</code>, deprecated lifecycles, <code>react-router-redux</code>,
+<code>superagent-promise</code>, and <code>global.Promise</code> are fully gone; the only remaining traces are
+comments explaining the old lifecycle names for context. <code>Profile</code>/<code>ProfileFavorites</code>
+correctly dissolve class inheritance into a shared <code>ProfileView</code> parameterized by
+<code>buildLoader</code>, matching the plan. Reducers, <code>agent.js</code>, <code>middleware.js</code>, and <code>store.js</code> are
+copied with only the toolchain-forced changes (<code>import.meta.env</code>, <code>history</code> package,
+dropped <code>router</code> slice) — no behavior drift. Both characterization targets are green
+(157/157 original, 157/157 migrated) and <code>vite build</code> is clean (244.54 kB).</p>
+<p>I read every file in <code>migrated/src</code> against the corresponding <code>original/src</code> file and
+against <code>migration-plan.md</code>/<code>migration-log.md</code>. I found no undocumented defects, no dead
+files, no unused action types beyond the already-documented preserved
+<code>PROFILE_FAVORITES_PAGE_*</code> case, and no dependency in <code>package.json</code> that isn&#39;t imported
+somewhere in <code>src/</code>.</p>
+<h2>Cleanups applied</h2>
+<p><strong>None.</strong> The codebase was already clean enough that no edit met the bar of &quot;clear
+improvement, zero behavior risk.&quot; The one candidate I considered and rejected:</p>
+<p>- Every component still does <code>import React from &#39;react&#39;</code> even though
+  <code>@vitejs/plugin-react</code> (confirmed via <code>node_modules/@vitejs/plugin-react/dist/index.mjs</code>,
+  default <code>jsxRuntime</code> is <code>&quot;automatic&quot;</code>) no longer requires it for JSX. This import is
+  inert, not incorrect — React 17 supports both runtimes, so keeping the explicit import
+  is a defensible, common transitional convention and is harmless either way. Removing it
+  would touch all 24 component files for zero functional or lint benefit (no ESLint config
+  in this repo flags it), so I left it as a follow-up rather than editing working code
+  under a &quot;zero unnecessary diff&quot; review posture.</p>
+<p>Gates were re-confirmed green in their pre-review state (no edits made, so no re-run was
+needed after the fact): <code>TARGET=migrated npx vitest run</code> → 157/157; plain <code>npx vitest run</code>
+(original) → 157/157; <code>npx vite build</code> → clean, 244.54 kB.</p>
+<h2>Follow-ups</h2>
+<h3>Preserved upstream bugs (do NOT fix — governance rule; my assessment of each)</h3>
+<p>| # | Bug | Assessment |
+|---|---|---|
+| 1 | <code>DELETE_COMMENT</code> reducer throws if <code>state.comments</code> is undefined | Low real-world risk (unreachable via UI since comments load before the delete button renders); worth a defensive <code>state.comments \|\| []</code> if ever revisited, but only alongside a behavior-change sign-off. |
+| 2 | <code>LOGOUT</code> writes <code>&#39;&#39;</code> to <code>localStorage.jwt</code> instead of <code>removeItem</code> | Harmless in practice (<code>agent.setToken(null)</code> still clears the in-memory token; empty string is falsy on next <code>APP_LOAD</code> read) but leaves a stray key — cosmetic. |
+| 3 | <code>settings</code> reducer sets <code>inProgress: true</code> on <strong>any</strong> <code>ASYNC_START</code>, not just settings-scoped ones | Could cause a spurious disabled-button flash on the settings form triggered by unrelated in-flight requests; low severity, UI-only. |
+| 4 | <code>PROFILE_FAVORITES_PAGE_LOADED/UNLOADED</code> defined + reduced but never dispatched | Dead action types, functionally inert since <code>ProfileFavorites</code> reuses <code>PROFILE_PAGE_*</code>. Safe to delete in a future non-behavior-preserving pass; flagged, not removed here per governance. |
+| 5 | <code>omitSlug</code> leaves <code>slug: undefined</code> in the update payload | Harmless — <code>JSON.stringify</code>/superagent drop <code>undefined</code> values; server never sees a conflicting slug key. |
+| 6 | <code>marked</code> <code>sanitize: true</code> escapes raw HTML into visible text | Intentional legacy rendering behavior; see CVE note below — this is the one item with real security relevance. |
+| 7 | Favorite/unfavorite dispatched with no login guard | Will hit the API unauthenticated if a logged-out user reaches the button (currently gated by UI flow, not code); low risk but worth a guard in a future behavior-change pass. |
+| 8 | Profile pages fetch 5 articles/page, <code>ListPagination</code> paginates assuming 10 | Cosmetic pagination-count mismatch on profile pages only (favorites tab is unaffected — it does pass a page-aware pager). |
+| 9 | Login/Register inputs start <code>value={undefined}</code> | Produces a one-time React &quot;uncontrolled → controlled&quot; console warning on first mount; no functional impact. |</p>
+<p>Also carried over correctly: <code>CommentContainer</code>&#39;s lowercase <code>&lt;list-errors&gt;</code> pseudo-element
+(comment errors are structurally never rendered — confirmed, not fixed); <code>Editor</code>&#39;s
+slug-vs-old-slug reachability note in the log; <code>Settings</code> never dispatching
+<code>SETTINGS_PAGE_UNLOADED</code>.</p>
+<h3>Modernization steps for a maintainer (out of this migration&#39;s scope)</h3>
+<p>- <strong>React 18 + <code>createRoot</code></strong>: batching change requires re-characterizing every async
+  dispatch ordering test; do only with the same characterization-first discipline used here.
+- <strong>react-router-dom v6</strong>: route-matching semantics changed (no more implicit partial
+  match without <code>exact</code>); would need a full route-table rewrite and re-test, not a drop-in.
+- <strong>Redux Toolkit</strong>: would collapse the 8 hand-written reducers + <code>constants/actionTypes.js</code>
+  into slices; biggest ergonomic win available, moderate mechanical effort.
+- <strong><code>marked</code> upgrade</strong>: current pin (<code>0.3.19</code>) has known CVEs (ReDoS related, e.g.
+  GHSA advisories for marked &lt;0.7). Upgrading requires re-implementing <code>sanitize: true</code>
+  equivalent behavior externally (e.g. DOMPurify post-render) since the option was removed
+  upstream — a deliberate, documented scope boundary in this migration (R3).
+  <strong>This is the one preserved item I&#39;d flag as a genuine security follow-up</strong>, not just
+  a style one.
+- <strong>superagent upgrade</strong>: 3.8.3 → latest is low-risk (native promises already assumed);
+  mainly a routine dependency bump plus a re-run of the <code>agent.js</code> characterization layer.
+- <strong>TypeScript</strong>: no types anywhere; a incremental <code>allowJs</code>+<code>checkJs</code> pass would catch
+  the <code>state.comments</code>/<code>omitSlug</code> classes of bug in the future without behavior changes.
+- <strong>MSW-based tests</strong>: characterization currently mocks at the <code>@app/agent</code> module
+  boundary; swapping to MSW would test closer to the real network boundary and make the
+  suite reusable if <code>agent.js</code>&#39;s internals ever change.</p></div>
+</details>
+
+<div class="footer">Generated by legacy-migrator · self-contained file, opens via file://.
+Also in this folder: <a href="README.md">README.md</a> (technical) · <a href="one-pager.md">one-pager.md</a> (non-technical summary) · <a href="migration-plan.md">migration-plan.md</a></div>
+</div></body></html>

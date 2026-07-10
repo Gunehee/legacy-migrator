@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>legacy-migrator report — legacy-migrator-fixture-test</title>
+<style>
+:root {
+  --surface: #fcfcfb; --page: #f9f9f7; --panel: #f3f2ef; --border: #e1e0d9;
+  --ink: #0b0b0b; --ink-2: #52514e; --ink-3: #898781;
+  --s-good: #0ca30c; --s-warn: #fab219; --s-crit: #d03b3b;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #1a1a19; --page: #0d0d0d; --panel: #232322; --border: #2c2c2a;
+    --ink: #ffffff; --ink-2: #c3c2b7; --ink-3: #898781;
+    --s-good: #0ca30c; --s-warn: #fab219; --s-crit: #d03b3b;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink);
+       font: 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+.wrap { max-width: 1000px; margin: 0 auto; padding: 32px 24px 64px; }
+h1 { font-size: 26px; margin: 0 0 4px; }
+h2 { font-size: 17px; margin: 40px 0 12px; }
+.sub { color: var(--ink-2); margin: 0 0 10px; }
+a { color: var(--s-good); }
+.meta { display: flex; gap: 28px; flex-wrap: wrap; margin: 18px 0 6px;
+        padding: 14px 18px; background: var(--panel);
+        border: 1px solid var(--border); border-radius: 10px; }
+.meta div { min-width: 130px; }
+.meta .k { font-size: 12px; color: var(--ink-3); text-transform: uppercase;
+           letter-spacing: .04em; }
+.meta .v { font-size: 20px; font-weight: 600; }
+.stagebar { display: flex; flex-wrap: wrap; border-radius: 10px; overflow: hidden;
+            border: 1px solid var(--border); }
+.step { flex: 1 1 150px; padding: 16px 14px 12px; background: var(--surface);
+        border-right: 1px solid var(--border); border-top: 4px solid var(--ink-3); }
+.step:last-child { border-right: none; }
+.step.pass { border-top-color: var(--s-good); }
+.step.fail { border-top-color: var(--s-crit); }
+.step.pending { border-top-color: var(--s-warn); }
+.step .name { font-weight: 700; font-size: 13px; text-transform: capitalize; }
+.step .icon { margin-right: 5px; }
+.step.pass .icon { color: var(--s-good); }
+.step.fail .icon { color: var(--s-crit); }
+.step.pending .icon { color: var(--s-warn); }
+.step .sub2 { font-size: 12px; color: var(--ink-3); margin-top: 6px; line-height: 1.5; }
+.legend { display: flex; gap: 18px; flex-wrap: wrap; margin: 10px 0 4px;
+          font-size: 13px; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.chip { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+.banner { border-radius: 10px; padding: 16px 18px; margin: 12px 0;
+          border: 1px solid var(--border); border-left: 6px solid var(--ink-3);
+          background: var(--panel); }
+.banner.good { border-left-color: var(--s-good); }
+.banner.crit { border-left-color: var(--s-crit); }
+.banner .verdict { font-size: 18px; font-weight: 700; }
+.banner .verdict .icon { margin-right: 8px; }
+.stats-grid { display: flex; gap: 16px; flex-wrap: wrap; }
+.stat { flex: 1 1 150px; background: var(--panel); border: 1px solid var(--border);
+        border-radius: 10px; padding: 14px 16px; }
+.stat .k { font-size: 12px; color: var(--ink-3); text-transform: uppercase;
+           letter-spacing: .04em; }
+.stat .v { font-size: 22px; font-weight: 600; margin-top: 2px; }
+.pattern-list { margin: 10px 0 0; padding: 0; list-style: none; }
+.pattern-list li { padding: 6px 10px; border-radius: 6px; font-size: 14px;
+                    display: flex; align-items: center; gap: 8px; }
+.pattern-list li:nth-child(odd) { background: var(--panel); }
+.pattern-list .icon.good { color: var(--s-good); }
+.pattern-list .icon.crit { color: var(--s-crit); }
+table { border-collapse: collapse; width: 100%; margin-top: 10px; font-size: 14px; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--border); }
+th { font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.decision { padding: 8px 10px; border-radius: 6px; font-size: 14px; margin-bottom: 4px; }
+.decision:nth-child(odd) { background: var(--panel); }
+.decision .stage-tag { display: inline-block; font-size: 11px; font-weight: 700;
+                        text-transform: uppercase; letter-spacing: .04em; color: var(--ink-3);
+                        margin-right: 8px; }
+details { margin-top: 14px; border: 1px solid var(--border); border-radius: 10px;
+          padding: 10px 16px; background: var(--panel); }
+summary { cursor: pointer; color: var(--ink-2); font-size: 14px; font-weight: 600; }
+details .md-body { margin-top: 10px; font-size: 14px; color: var(--ink-2); }
+details .md-body h1, details .md-body h2, details .md-body h3 { color: var(--ink); }
+details .md-body pre { background: var(--surface); padding: 10px; border-radius: 6px;
+                        overflow-x: auto; border: 1px solid var(--border); }
+code { background: var(--surface); padding: 1px 5px; border-radius: 4px;
+       border: 1px solid var(--border); font-size: 13px; }
+.footer { margin-top: 48px; font-size: 13px; color: var(--ink-3); }
+.footer a { margin-right: 14px; }
+</style></head><body><div class="wrap">
+
+<h1>legacy-migrator-fixture-test</h1>
+<p class="sub">lane: <code>class-react-to-hooks</code> · source: <a href="https://github.com/Gunehee/legacy-migrator-fixture-test">https://github.com/Gunehee/legacy-migrator-fixture-test</a></p>
+<div class="meta">
+  <div><div class="k">run created</div><div class="v">2026-07-07</div></div>
+  <div><div class="k">wall-clock (sum of stages)</div><div class="v">15m39s</div></div>
+  <div><div class="k">total cost</div><div class="v">$5.7372</div></div>
+</div>
+
+<h2>Pipeline stages</h2>
+<div class="stagebar"><div class="step pass">
+      <div class="name"><span class="icon">&#10003;</span>analyze</div>
+      <div class="sub2">fable<br>1m34s · $0.6337</div>
+    </div><div class="step pass">
+      <div class="name"><span class="icon">&#10003;</span>testgen</div>
+      <div class="sub2">sonnet<br>3m58s · $1.0971</div>
+    </div><div class="step pass">
+      <div class="name"><span class="icon">&#10003;</span>migrate</div>
+      <div class="sub2">fable<br>7m40s · $3.5457</div>
+    </div><div class="step pass">
+      <div class="name"><span class="icon">&#10003;</span>review</div>
+      <div class="sub2">sonnet<br>1m25s · $0.3929</div>
+    </div><div class="step pass">
+      <div class="name"><span class="icon">&#10003;</span>document</div>
+      <div class="sub2">haiku<br>56s · $0.0678</div>
+    </div><div class="step pass">
+      <div class="name"><span class="icon">&#10003;</span>validate</div>
+      <div class="sub2">deterministic<br>6s · $0.0000</div>
+    </div></div>
+<div class="legend">
+  <span><span class="chip" style="background:var(--s-good)"></span>passed</span>
+  <span><span class="chip" style="background:var(--s-crit)"></span>failed</span>
+  <span><span class="chip" style="background:var(--s-warn)"></span>pending / not yet run</span>
+</div>
+
+<h2>Test proof</h2>
+<div class="banner good"><div class="verdict"><span class="icon">&#10003;</span>27/27 passing on both original and migrated</div></div>
+
+<h2>Before / after code</h2>
+<div class="stats-grid">
+      <div class="stat"><div class="k">files changed</div><div class="v">3</div></div>
+      <div class="stat"><div class="k">lines added</div><div class="v">+51</div></div>
+      <div class="stat"><div class="k">lines removed</div><div class="v">&minus;62</div></div>
+    </div>
+<div class="sub" style="margin-top:14px">Legacy pattern sweep (from validate-report.md):</div>
+<ul class="pattern-list"><li><span class="icon good">&#10003;</span>0 remaining <code>extends React.Component / Component</code> calls</li><li><span class="icon good">&#10003;</span>0 remaining <code>connect(</code> calls</li><li><span class="icon good">&#10003;</span>0 remaining <code>this.setState</code> calls</li></ul>
+
+<h2>Decision log</h2>
+<div class="decision"><span class="stage-tag">migrate</span>Dependency set (react 18.3, react-redux 9, @reduxjs/toolkit 2, RTL 14 as devDeps for the dual-target harness alias) landed with module 1 instead of last as planned: connect()-&gt;hooks conversions cannot execute against react-redux 5, so every converted component must be tested on the modern runtime immediately.</div>
+<div class="decision"><span class="stage-tag">migrate</span>store.js: RTK configureStore replaces deprecated createStore+combineReducers, but action creators and switch reducers stay hand-written verbatim - createSlice/createAction can only carry data under <code>payload</code>, and the pinned public action shape {type:&#39;ADD_TODO&#39;, text} has a top-level text field.</div>
+<div class="decision"><span class="stage-tag">migrate</span>store.js: RTK default thunk middleware disabled (middleware: gDM =&gt; gDM({thunk:false})) - the legacy store accepted plain-object actions only (dispatching a function threw); enabling thunk would silently extend the public dispatch contract.</div>
+<div class="decision"><span class="stage-tag">migrate</span>Counter/TodoList: dropping connect() removes the ownProps override surface (count, onIncrement, onDecrement, todos, onAddTodo are no longer injectable props) - observable API narrowing per plan risk 3; no consumer in this repo passes them.</div>
+<div class="decision"><span class="stage-tag">migrate</span>TodoList.js: preserved verbatim per plan flags - no-trim empty-string submit guard (whitespace-only and &#39;0&#39; todos ARE added), dispatch-then-clear submit order, index-as-key list rendering.</div>
+<div class="decision"><span class="stage-tag">migrate</span>Harness accommodation (only test change): Counter.test.js external-dispatch case wraps store.dispatch in act() - React 18 batches store updates originating outside React into a microtask where React 16 flushed synchronously; the pinned behavior is &#39;view reflects the dispatch once processed&#39;, not the legacy flush timing. Modified suite re-verified 27/27 green against original/.</div>
+
+<h2>Full migration log</h2>
+<details><summary>migration-log.md — what changed, why, and test status, module by module</summary>
+<div class="md-body"><h1>Migration log — legacy-migrator-fixture-test</h1>
+<h2>Testgen stage (2026-07-08)</h2>
+<p>- <strong>[rationale] Store isolation solved via test technique, not a source change</strong>:
+  <code>store.js</code> exports only the built <code>store</code> singleton, never the underlying reducer, so
+  naive tests sharing one import would leak counter/todos state across cases (risk area
+  1 in migration-plan.md). Chose <code>vi.resetModules()</code> + dynamic <code>import(&#39;@app/store&#39;)</code>
+  per test (see <code>tests/helpers/freshApp.js</code>) over adding an exported reducer — zero edits
+  to <code>original/</code>, and no new API surface for the migration to carry forward. Satisfies
+  governance rule 4 (originals immutable) and rule 2 (no incidental API-surface changes).
+- <strong>[rationale] Dual-target harness (<code>characterization/</code> as its own package)</strong>: a
+  <code>vitest.config.mjs</code> resolves an <code>@app</code> alias to <code>../original/src</code> or <code>../migrated/src</code>
+  based on a <code>TARGET</code> env var, and pins every runtime dependency (<code>react</code>, <code>react-dom</code>,
+  <code>react-redux</code>, <code>redux</code>, testing-library packages) to the target&#39;s own <code>node_modules</code> so
+  no two React copies end up in one test run. This lets the identical 27-test suite gate
+  both <code>original/</code> now and <code>migrated/</code> once step 6 of the migration sequence needs it —
+  <code>npm test</code> (default <code>TARGET=original</code>) is the testgen gate; <code>npm run test:migrated</code> is
+  recorded as the pipeline&#39;s validationCommand for later stages.
+- <strong>[rationale] JSX handled via an esbuild transform plugin, not a babel config file</strong>:
+  the fixture ships no build tooling and <code>.js</code> files containing JSX (faithful to
+  upstream) need a transform to run under Node/jsdom. Adding a plugin inside
+  <code>vitest.config.mjs</code> avoids introducing a <code>.babelrc</code> or similar file that would look
+  like part of the app&#39;s own build setup.
+- <strong>[flag / pinned via test] TodoList empty-input guard</strong> (<code>original/src/TodoList.js:19</code>):
+  <code>if (!this.state.text) return;</code> blocks only the empty string. Whitespace-only (<code>&#39;   &#39;</code>)
+  and the literal string <code>&#39;0&#39;</code> both pass the guard and ARE added as todos. Per governance
+  rule 2 this is preserved exactly — <code>tests/TodoList.test.js</code> pins both edge cases so a
+  migration that &quot;fixes&quot; this with <code>.trim()</code> or a truthiness rewrite fails the gate.
+- <strong>[flag / pinned via test] <code>key={i}</code> index keys</strong> (<code>original/src/TodoList.js:35</code>): kept
+  as observable-behavior-neutral for an append-only list; not something a characterization
+  test can assert on directly (keys aren&#39;t part of rendered output), so this is noted here
+  rather than pinned by an assertion.
+- <strong>[result] <code>characterization/</code> created — 4 files, 27 tests, all green against
+  <code>original/</code></strong>: <code>store.test.js</code> (13 — action creators, counter slice, todos slice,
+  immutability, cross-slice independence), <code>Counter.test.js</code> (5 — initial render, +/-
+  dispatch, accumulation, external <code>store.dispatch</code> wiring), <code>TodoList.test.js</code> (8 —
+  controlled input, submit/clear/store-update, empty/whitespace/<code>&quot;0&quot;</code> guard edges,
+  duplicates, li-count parity), <code>wiring.test.js</code> (1 — Counter and TodoList mounted under
+  one store stay isolated via <code>combineReducers</code>). No file under <code>original/</code> was modified;
+  reproduction command is <code>npm test</code> from <code>characterization/</code> (<code>TARGET=original</code> is the
+  default).</p>
+<h2>Migrate stage (2026-07-08, lane: class-react-to-hooks)</h2>
+<p>Executed plan §4 into <code>migrated/</code> — <code>original/</code> untouched (verified via <code>git status</code>,
+clean). Final state: <strong>27/27 green against <code>migrated/</code> AND 27/27 green against
+<code>original/</code> with the identical suite</strong> (<code>npm run test:migrated</code> / <code>npm test</code> from
+<code>characterization/</code>).</p>
+<h3>Sequencing deviation (logged up front)</h3>
+<p>- <strong>[rationale] Dependency bump landed with module 1, not last (plan step 5)</strong>: a
+  <code>connect()</code>→<code>useSelector</code>/<code>useDispatch</code> conversion cannot execute against
+  react-redux 5 — the hooks don&#39;t exist there — so <code>migrated/package.json</code>
+  (<code>react@18.3</code>, <code>react-dom@18.3</code>, <code>react-redux@9</code>, <code>@reduxjs/toolkit@2</code>; devDeps
+  <code>@testing-library/react@14</code> + <code>@testing-library/dom@9</code> so the harness&#39;s
+  TARGET=migrated alias resolves React-18-compatible test libs) had to exist before
+  any component conversion could be gated. Every converted module was therefore
+  tested against the modern runtime immediately, which is the plan&#39;s underlying
+  intent (no untested-runtime window).
+- <strong>[note] Per-module full-suite gates</strong>: <code>tests/helpers/freshApp.js</code> statically
+  imports both <code>@app/Counter</code> and <code>@app/TodoList</code>, so component test files can only
+  run against <code>migrated/</code> once both components exist. Gates actually run: module 1 →
+  <code>store.test.js</code> vs migrated (13/13) + full suite vs original (27/27); modules 2+3 →
+  full suite vs migrated + full suite vs original (27/27 each). No module advanced
+  with anything red.</p>
+<h3>Module 1 — <code>store.js</code> (13/13 store tests green vs migrated)</h3>
+<p>- <strong>[rationale] RTK <code>configureStore</code> replaces deprecated <code>createStore</code>+<code>combineReducers</code>;
+  creators and reducers stay hand-written verbatim</strong>: the pinned public action shape
+  <code>{ type: &#39;ADD_TODO&#39;, text }</code> carries its payload in a top-level <code>text</code> field, and
+  RTK&#39;s <code>createSlice</code>/<code>createAction</code> can only emit data under <code>payload</code> (prepare
+  callbacks return <code>{payload, meta, error}</code> only) — so the plan&#39;s &quot;RTK with action
+  types pinned to legacy strings&quot; resolves to: RTK for store construction, legacy
+  switch reducers and creators copied unchanged (also preserving the pinned
+  referential-equality semantics on unknown actions).
+- <strong>[rationale] Default thunk middleware disabled</strong> (<code>middleware: gDM =&gt; gDM({ thunk: false })</code>):
+  the legacy store had no middleware, so <code>dispatch(fn)</code> threw; leaving thunk enabled
+  would silently extend the observable dispatch contract (governance rule 2). RTK&#39;s
+  dev-only immutability/serializability checks are kept — they emit no output for
+  this state shape and don&#39;t alter behavior.
+- Singleton <code>store</code> export preserved (plan decision).</p>
+<h3>Module 2 — <code>Counter.js</code></h3>
+<p>- Class → function component; <code>connect(mapStateToProps, mapDispatchToProps)</code> →
+  <code>useSelector(state =&gt; state.counter)</code> + <code>useDispatch</code>, handlers as inline closures.
+  DOM output identical (<code>div.counter</code>, <code>-</code> button, count span, <code>+</code> button).
+- <strong>[flag] API narrowing per plan risk 3</strong>: without <code>connect()</code>, <code>count</code>/<code>onIncrement</code>/
+  <code>onDecrement</code> are no longer overridable via ownProps. No consumer in this repo
+  passes them; narrowing accepted and logged (also applies to <code>todos</code>/<code>onAddTodo</code>
+  in module 3).</p>
+<h3>Module 3 — <code>TodoList.js</code></h3>
+<p>- Constructor state + two <code>.bind(this)</code> handlers → <code>useState(&#39;&#39;)</code> + closure handlers.
+- <strong>Preserved verbatim per plan flags</strong>: the no-trim empty-string guard (<code>if (!text)</code>)
+  so whitespace-only and <code>&#39;0&#39;</code> todos ARE added (both pinned by tests); the
+  dispatch-then-clear submit order; <code>key={i}</code> index keys (remount semantics
+  unchanged).</p>
+<h3>Full-suite gate + one harness accommodation (flagged)</h3>
+<p>- First full run vs <code>migrated/</code>: <strong>26/27</strong> — the only failure was
+  <code>Counter.test.js</code> &quot;external store.dispatch updates the rendered count&quot;, which
+  dispatched from outside React and synchronously asserted the DOM. React 16 +
+  react-redux 5 flushed subscriber re-renders synchronously; React 18&#39;s concurrent
+  root batches externally-originated updates into a microtask, so the DOM read one
+  tick too early. This is framework-internal flush *timing*, not app behavior — the
+  store→view wiring still updates the count (plan risk 7 anticipated exactly this).
+- <strong>[rationale / only test change] Wrapped that one dispatch in <code>act()</code></strong> (valid on
+  both stacks: RTL has exported <code>act</code> since v9), asserting &quot;the view reflects the
+  dispatch once processed&quot; instead of the legacy synchronous flush. The modified
+  suite was then re-run against <code>original/</code> — still 27/27 — so the golden-master
+  equivalence gate remains: identical suite, both trees green. No app source was
+  changed to pass any test.
+- Final: <code>npm run test:migrated</code> → 27 passed (27); <code>npm test</code> (TARGET=original) →
+  27 passed (27). No act()/deprecation warnings in the migrated run. Gates and six
+  decision rationales recorded in <code>run-state.json</code>.</p></div>
+</details>
+
+<h2>Review</h2>
+<details><summary>review-report.md — post-migration code-quality pass</summary>
+<div class="md-body"><h1>Review report — legacy-migrator-fixture-test</h1>
+<p><strong>Reviewer stage, 2026-07-08.</strong> Full read-through of <code>migrated/src/*.js</code>,
+<code>migrated/package.json</code>/<code>package-lock.json</code>, and the characterization harness
+that gates it, against <code>migration-plan.md</code> and <code>migration-log.md</code>.</p>
+<h2>Verification</h2>
+<p>- Re-ran both gates from a clean shell: <code>npm run test:migrated</code> → 27/27 green;
+  <code>npm test</code> (TARGET=original) → 27/27 green. Matches <code>run-state.json</code>&#39;s
+  recorded <code>validationCommand</code>.
+- <code>npm ls --depth=0</code> in <code>migrated/</code> resolves cleanly — no phantom/missing deps,
+  lockfile matches <code>package.json</code> (react/react-dom 18.3.1, react-redux 9.3.0,
+  @reduxjs/toolkit 2.12.0, RTL 14.3.1 + @testing-library/dom 9.3.4 as devDeps).
+- Confirmed <code>original/</code> untouched (only files under <code>migrated/</code> and
+  <code>characterization/</code> differ from the initial checkout).</p>
+<h2>Code quality</h2>
+<p>No changes made — the migrated tree is already clean:</p>
+<p>- <strong>No dead code / no legacy shims.</strong> <code>Counter.js</code> and <code>TodoList.js</code> are
+  plain function components; no leftover <code>connect()</code>, <code>mapStateToProps</code>,
+  class boilerplate, or <code>.bind(this)</code>. <code>store.js</code> has no unused <code>combineReducers</code>/
+  <code>createStore</code> residue from the redux→RTK swap.
+- <strong>Imports are all used</strong> (checked every <code>import</code> in <code>migrated/src</code> and the
+  test suite by hand) — nothing to prune.
+- <strong>Idiomatic for the target stack</strong>: hooks (<code>useState</code>, <code>useSelector</code>,
+  <code>useDispatch</code>) used correctly and minimally; <code>configureStore</code> with an
+  explicit <code>middleware</code> override rather than a boolean flag hack; comments
+  are used only where they carry non-obvious rationale (the no-<code>.trim()</code>
+  guard, the disabled thunk middleware, the hand-written action creators
+  instead of <code>createSlice</code>/<code>createAction</code>) — no restating-the-obvious
+  comments to strip.
+- <strong><code>React</code> import is still required</strong> in both components despite React 18:
+  the harness&#39;s esbuild plugin uses the classic <code>jsx: &#39;transform&#39;</code> mode (see
+  <code>characterization/vitest.config.mjs</code>), not the automatic runtime, so this
+  is a correct dependency of the current build setup, not a legacy leftover.
+- Governance rule 2 (no incidental behavior change) holds up under direct
+  inspection: no-trim submit guard, dispatch-then-clear order, <code>key={i}</code>,
+  and the <code>{type, text}</code> action shape are all preserved verbatim in
+  <code>migrated/src/TodoList.js</code> and <code>migrated/src/store.js</code>.</p>
+<h2>Follow-ups (non-blocking, informational only — no action taken)</h2>
+<p>These are pre-existing/plan-flagged characteristics, not migration defects.
+Listed per the reviewer&#39;s read-through, not because they need fixing now —
+changing any of them would be an unrequested behavior change per governance
+rule 2.</p>
+<p>1. <strong>API narrowing from dropping <code>connect()</code></strong> (<code>Counter.js</code>, <code>TodoList.js</code>):
+   <code>count</code>/<code>onIncrement</code>/<code>onDecrement</code>/<code>todos</code>/<code>onAddTodo</code> are no longer
+   injectable via ownProps. Already flagged in <code>migration-plan.md</code> risk 3 and
+   <code>migration-log.md</code>; no consumer in this repo passes them. Worth a note in
+   the eventual doc-writer output if this fixture is ever imported as a
+   library rather than run standalone.
+2. <strong>Thunk middleware disabled</strong> (<code>store.js:38</code>): correct today (matches the
+   legacy plain-object-only dispatch contract), but is an easy thing for a
+   future contributor to &quot;fix&quot; by re-enabling default middleware without
+   realizing it changes the public dispatch contract. The inline comment
+   already covers this; no code change needed.
+3. <strong><code>key={i}</code> index keys</strong> (<code>TodoList.js:33</code>): safe only because the list is
+   append-only with no delete/reorder/insert-at-index operation anywhere in
+   the app. If a delete/reorder feature is ever added, this will need a
+   stable key at the same time — not before.</p>
+<h2>Verdict</h2>
+<p>Suite is green on both targets; no fixes were required to keep it that way,
+so none were made. Migration is ready to proceed to the document/validate
+stages as-is.</p></div>
+</details>
+
+<div class="footer">Generated by legacy-migrator · self-contained file, opens via file://.
+Also in this folder: <a href="README.md">README.md</a> (technical) · <a href="one-pager.md">one-pager.md</a> (non-technical summary) · <a href="migration-plan.md">migration-plan.md</a></div>
+</div></body></html>
